@@ -4,18 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StudyProgram extends Model
 {
     use HasFactory;
 
-    protected $guard = ["id"];
+    protected array $guard = ["id"];
 
-    public function employee(){
+    public function employee(): BelongsTo
+    {
         return $this->belongsTo(Employee::class, "mngr_id", "nik");
     }
 
-    public function faculty(){
+    public function faculty(): BelongsTo
+    {
         return $this->belongsTo(Faculty::class, "faculty_id", "id");
     }
 }
