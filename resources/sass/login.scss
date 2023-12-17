@@ -1,0 +1,34 @@
+@import '@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '@fortawesome/fontawesome-free/css/regular.css';
+@import '@fortawesome/fontawesome-free/css/solid.css';
+@import '@fortawesome/fontawesome-free/css/brands.css';
+
+#layout-authentication {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    &-content {
+        min-width: 0;
+        flex-grow: 1;
+    }
+
+    &-footer {
+        min-width: 0;
+    }
+}
+
+#input-password {
+    padding-right: 48px;
+}
+
+#btn-password-visibility {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+}
