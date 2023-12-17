@@ -18,6 +18,8 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
 </head>
 
 <body>
@@ -32,15 +34,15 @@
                             @csrf
 
                             <div class="row mb-3">
-                                <label for="email"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                                <label for="id"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('NIK / NIM') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email"
-                                        class="form-control @error('email') is-invalid @enderror" name="email"
-                                        value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                    <input id="id" type="text"
+                                        class="form-control @error('id') is-invalid @enderror" name="id"
+                                        value="{{ old('id') }}" required autofocus>
 
-                                    @error('email')
+                                    @error('id')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -97,7 +99,76 @@
             </div>
         </div>
     </div>
-
+    {{-- <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+          <main>
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-lg-5">
+                  <div class="card shadow-lg border-0 rounded-lg mt-5">
+                    <div class="card-header">
+                      <h3 class="text-center font-weight-light my-4">Login</h3>
+                    </div>
+                    <div class="card-body">
+                      <form>
+                        <div class="form-floating mb-3">
+                          <input
+                            class="form-control"
+                            id="nik"
+                            type="text"
+                            
+                          />
+                          <label for="nik">NIK/NIM</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                          <input
+                            class="form-control"
+                            id="pin"
+                            type="password"
+                            placeholder="PIN"
+                          />
+                          <label for="pin">PIN</label>
+                        </div>
+                        <div class="form-check mb-3">
+                          <input
+                            class="form-check-input"
+                            id="rememberMe"
+                            type="checkbox"
+                            value=""
+                          />
+                          <label
+                            class="form-check-label"
+                            for="rememberMe"
+                            >Remember me</label
+                          >
+                        </div>
+                        
+                        <a class="btn btn-primary w-100" href="index.html">Login</a>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+          <footer class="py-4 bg-light mt-auto">
+            <div class="container px-4">
+              <div
+                class="d-flex align-items-center justify-content-between small"
+              >
+                <div class="text-muted">Copyright &copy; MyWebsite 2023</div>
+                <div>
+                  <a href="#">Privacy Policy</a>
+                  &middot;
+                  <a href="#">Terms &amp; Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+    </div> --}}
 </body>
 
 </html>
