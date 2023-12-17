@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected string $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.
@@ -39,16 +39,8 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function username()
+    public function username(): string
     {
         return 'id';
     }
-
-
-    // public function login(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'id' => ''
-    //     parent::login($request);
-    // }
 }
