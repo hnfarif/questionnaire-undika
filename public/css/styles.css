@@ -10846,16 +10846,16 @@ body {
   height: 100%;
 }
 
-#layoutAuthentication {
+#layout_authentication {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
-#layoutAuthentication #layoutAuthentication_content {
+#layout_authentication #layout_authentication_content {
   min-width: 0;
   flex-grow: 1;
 }
-#layoutAuthentication #layoutAuthentication_footer {
+#layout_authentication #layoutAuthentication_footer {
   min-width: 0;
 }
 
