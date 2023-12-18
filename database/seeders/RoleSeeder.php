@@ -14,10 +14,10 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            "STUPRO",
-            "FACULTY",
-            "LEAD",
-            "STUDENT"
+            "KAPRODI",
+            "DEKAN",
+            "PIMPINAN",
+            "MAHASISWA"
         ];
 
         foreach ($roles as $role) {

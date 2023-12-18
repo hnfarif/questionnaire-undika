@@ -34,7 +34,7 @@ class FacultyRoleSeeder extends Seeder
 
             $user->employee()->save($employee);
 
-            $role = Role::whereName("FACULTY")->first();
+            $role = Role::whereName("DEKAN")->first();
             $role->users()->attach($user->id);
 
         }

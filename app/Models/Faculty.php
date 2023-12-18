@@ -9,7 +9,7 @@ class Faculty extends Model
 {
     use HasFactory;
 
-    protected $guard = ["id"];
+    protected array $guard = ["id"];
 
     public function employee(){
         return $this->belongsTo(Employee::class, "mngr_id", "nik");
