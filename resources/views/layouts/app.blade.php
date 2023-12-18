@@ -22,6 +22,7 @@
     'resources/js/app.js',
     'resources/js/dashboard.js'
   ])
+  @stack('scripts')
 </head>
 
 <body class="sb-nav-fixed">
