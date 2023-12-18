@@ -12,14 +12,16 @@ class Employee extends Model
     protected $primaryKey = 'nik';
     public function user()
     {
-        return $this->belongsTo(User::class, 'id', 'nik');
+        return $this->belongsTo(User::class, 'nik', 'id');
     }
 
-    public function studyProgram(){
-        return $this->hasOne(StudyProgram::class,'mngr_id','nik');
+    public function studyProgram()
+    {
+        return $this->hasOne(StudyProgram::class, 'mngr_id', 'nik');
     }
 
-    public function faculty(){
-        return $this->hasOne(Faculty::class,'mngr_id','nik');
+    public function faculty()
+    {
+        return $this->hasOne(Faculty::class, 'mngr_id', 'nik');
     }
 }
