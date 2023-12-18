@@ -38,7 +38,7 @@ class QuestionnaireController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view("questionnaire.detail", compact("id"));
     }
 
     /**
