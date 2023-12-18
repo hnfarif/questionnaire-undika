@@ -10,4 +10,12 @@ class Questionnaire extends Model
     use HasFactory;
 
     protected array $guard = ['id'];
+
+    protected $fillable = [
+        'author_id',
+        'title',
+        'description',
+        'start_date',
+        'end_date'
+    ];
 }

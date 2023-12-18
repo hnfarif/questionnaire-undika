@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->string('author_id', 6);
             $table->string('title');
             $table->text('description');
-            $table->timestamp('published_at');
-            $table->unsignedBigInteger('duration_in_mills');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
 
             $table->foreign('author_id')->references('nik')->on('employees');

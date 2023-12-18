@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\QuestionnaireController;
-use App\Models\Questionnaire;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*

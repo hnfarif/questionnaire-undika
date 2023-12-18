@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Questionnaire;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class QuestionnaireController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
         $questionnaire = Questionnaire::all();
 
@@ -36,7 +37,7 @@ class QuestionnaireController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): View
     {
         return view("questionnaire.detail", compact("id"));
     }
