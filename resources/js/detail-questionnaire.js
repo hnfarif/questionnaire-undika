@@ -1,10 +1,6 @@
 import $ from 'jquery'
-// import 'datatables.net-dt'
-// import 'datatables.net-dt/css/jquery.dataTables.css'
 
 $(function () {
-  //   $('#detail-questionnaire-table').DataTable()
-
   $(document).on('click', '.btn-delete', function () {
     var targetInputId = $(this).data('target')
 
