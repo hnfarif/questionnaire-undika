@@ -21,7 +21,7 @@ class FacultySeeder extends Seeder
             "Desain dan Industri Kreatif",
         ];
 
-        $empFaculty = Role::whereName("FACULTY")->first();
+        $empFaculty = Role::whereName("DEKAN")->first();
 
         foreach ($faculties as $index => $fac) {
 

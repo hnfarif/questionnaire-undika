@@ -25,7 +25,7 @@ class StudyProgramSeeder extends Seeder
                 'DIV Produksi Film dan Televisi']
         ];
 
-        $empStuPro = Role::whereName("STUPRO")->first();
+        $empStuPro = Role::whereName("KAPRODI")->first();
 
         foreach ($university as $facultyName => $studyPrograms) {
             foreach ($studyPrograms as $index => $studyProgram) {

@@ -18,9 +18,9 @@ class StudyProgramRoleSeeder extends Seeder
     public function run(): void
     {
         for ($i = 1; $i <= 8; $i++) {
-            
+
             $user = User::create([
-                'id' => fake()->randomNumber(6,true),
+                'id' => fake()->randomNumber(6, true),
                 'email' => fake()->unique()->safeEmail(),
                 'email_verified_at' => now(),
                 'password' => Hash::make('123456'),
@@ -31,12 +31,12 @@ class StudyProgramRoleSeeder extends Seeder
                 'nik' => $user->id,
                 'name' => fake()->name(),
             ]);
-    
+
             $user->employee()->save($employee);
-            
-            $role = Role::whereName("STUPRO")->first();
+
+            $role = Role::whereName("KAPRODI")->first();
             $role->users()->attach($user->id);
         }
     }
-    
+
 }

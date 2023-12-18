@@ -34,7 +34,7 @@ class LeaderRoleSeeder extends Seeder
 
             $user->employee()->save($employee);
 
-            $role = Role::whereName("LEAD")->first();
+            $role = Role::whereName("PIMPINAN")->first();
             $role->users()->attach($user->id);
         }
     }

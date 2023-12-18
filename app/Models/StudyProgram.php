@@ -11,11 +11,18 @@ class StudyProgram extends Model
 
     protected $guard = ["id"];
 
-    public function employee(){
+    public function employee()
+    {
         return $this->belongsTo(Employee::class, "mngr_id", "nik");
     }
 
-    public function faculty(){
+    public function faculty()
+    {
         return $this->belongsTo(Faculty::class, "faculty_id", "id");
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class, "study_program_id", "id");
     }
 }
