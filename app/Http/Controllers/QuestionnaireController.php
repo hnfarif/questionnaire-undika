@@ -13,9 +13,7 @@ class QuestionnaireController extends Controller
      */
     public function index(): View
     {
-        $questionnaire = Questionnaire::all();
-
-        return view("questionnaire.index", compact("questionnaire"));
+        return view("questionnaire.index");
     }
 
     /**
@@ -39,7 +37,8 @@ class QuestionnaireController extends Controller
      */
     public function show(string $id): View
     {
-        return view("questionnaire.detail", compact("id"));
+        $questionnaire = Questionnaire::findOrFail($id);
+        return view("questionnaire.detail", compact("questionnaire"));
     }
 
     /**
