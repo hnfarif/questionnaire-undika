@@ -42,7 +42,7 @@
                   <div class="form-group question-group mb-3">
 
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -61,7 +61,7 @@
                   <div class="form-group question-group mb-3">
 
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -96,7 +96,7 @@
                 <div class="reliability-question">
                   <div class="form-group question-group mb-3">
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -116,7 +116,7 @@
                   <div class="form-group question-group mb-3">
 
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -152,7 +152,7 @@
                   <div class="form-group question-group mb-3">
 
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -171,7 +171,7 @@
                   <div class="form-group question-group mb-3">
 
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -207,7 +207,7 @@
                 <div class="empathy-question">
                   <div class="form-group question-group mb-3">
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -224,7 +224,7 @@
                   </div>
                   <div class="form-group question-group mb-3">
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -264,7 +264,7 @@
                 <div class="assurance-question">
                   <div class="form-group question-group mb-3">
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
@@ -283,7 +283,7 @@
 
                   <div class="form-group question-group mb-3">
                     <div class="input-group gap-3">
-                      <label>
+                      <label class="flex-grow-1">
                         <input
                           type="text"
                           class="form-control"
