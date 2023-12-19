@@ -61,7 +61,7 @@ $(function() {
     const endDate = $('#input-end-date').val()
 
     $.post({
-      url: 'api/questionnaire',
+      url: '/api/questionnaire',
       data: JSON.stringify({ title, description, startDate, endDate }),
       headers: {
         'Content-Type': 'application/json'

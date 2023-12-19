@@ -10,4 +10,10 @@ class Question extends Model
     use HasFactory;
 
     protected array $guard = ['id'];
+
+    protected $fillable = [
+        'questionnaire_id',
+        'category_id',
+        'description'
+    ];
 }
