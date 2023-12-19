@@ -27,4 +27,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::middleware('auth')->controller(QuestionnaireController::class)->group(function () {
     Route::get('questionnaire', 'index')->name('questionnaire.index');
     Route::get('questionnaire/{id}', 'show')->name('questionnaire.show');
+    Route::get('questionnaire/{id}/question', 'question')->name('questionnaire.question');
+    Route::post('questionnaire/{id}/answer', 'answer')->name('questionnaire.answer');
+    Route::patch('questionnaire/{id}/submit', 'submit')->name('questionnaire.submit');
+    Route::patch('questionnaire/{id}/approve', 'approve')->name('questionnaire.approve');
+    Route::patch('questionnaire/{id}/reject', 'reject')->name('questionnaire.reject');
 });
