@@ -2,7 +2,7 @@ import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import Swal from 'sweetalert2'
 
-$(function() {
+$(function () {
   const fullToolbar = [
     [{ font: [] }, { size: [] }],
     ['bold', 'italic', 'underline', 'strike'],
@@ -12,30 +12,30 @@ $(function() {
     [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
     ['direction', { align: [] }],
     ['link', 'image', 'video', 'formula'],
-    ['clean']
+    ['clean'],
   ]
 
   new Quill('#editor-add', {
     bounds: '#editor-add',
     placeholder: 'Type Something...',
     modules: {
-      toolbar: fullToolbar
+      toolbar: fullToolbar,
     },
-    theme: 'snow'
+    theme: 'snow',
   })
 
   new Quill('#editor-update', {
     bounds: '#editor-update',
     placeholder: 'Type Something...',
     modules: {
-      toolbar: fullToolbar
+      toolbar: fullToolbar,
     },
-    theme: 'snow'
+    theme: 'snow',
   })
 
   renderQuestions()
 
-  $('.btn-add').on('click', function() {
+  $('.btn-add').on('click', function () {
     $('#modal-add .ql-editor').empty()
 
     const categoryId = $(this).data('category-id')
@@ -43,7 +43,6 @@ $(function() {
 
     $('#title-modal-add').text(categoryName)
     $('#modal-add').modal('show')
-
 
     $('#btn-save').off().on('click', handleSaveQuestion(categoryId))
   })
@@ -56,8 +55,8 @@ $(function() {
         url: '/api/question',
         data: JSON.stringify({ questionnaireId: questionnaire.id, categoryId, description }),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
         .done(() => {
           $('#modal-add').modal('hide')
@@ -71,7 +70,7 @@ $(function() {
 
   function renderQuestions() {
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
-      .done(function(questions) {
+      .done(function (questions) {
         $('.question-item').empty()
         questions.forEach((question) => {
           $(`#accordion-${question.category_id} .question-item`).append(`
@@ -81,79 +80,89 @@ $(function() {
               data-category-id="${question.category_id}"
               class="question input-group gap-3 mb-3">
                 <div class="form-control flex-grow-1">${question.description}</div>
-                <div class="input-group-append">
+                <div class="input-group-append my-auto">
                   <button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
-                    Hapus
+                  <i class="fa-solid fa-trash"></i>
                   </button>
               </div>
             </div>
           `)
         })
 
-        $('.question').off().on('click', function(event) {
-          event.stopPropagation()
+        $('.question')
+          .off()
+          .on('click', function (event) {
+            event.stopPropagation()
 
-          $('#modal-update .ql-editor').empty()
+            $('#modal-update .ql-editor').empty()
 
-          const questionId = $(this).data('question-id')
-          const categoryId = $(this).data('category-id')
+            const questionId = $(this).data('question-id')
+            const categoryId = $(this).data('category-id')
 
-          $.get(`/api/question/${questionId}`)
-            .done((question) => {
-              $('#editor-update .ql-editor').html(question.description)
+            $.get(`/api/question/${questionId}`)
+              .done((question) => {
+                $('#editor-update .ql-editor').html(question.description)
 
-              $('#modal-update').modal('show')
+                $('#modal-update').modal('show')
 
-              $('#btn-update').off().on('click', function() {
-                const description = $('#editor-update .ql-editor').html()
+                $('#btn-update')
+                  .off()
+                  .on('click', function () {
+                    const description = $('#editor-update .ql-editor').html()
 
+                    $.ajax({
+                      url: `/api/question/${questionId}`,
+                      method: 'PUT',
+                      data: JSON.stringify({
+                        questionnaireId: questionnaire.id,
+                        categoryId,
+                        description,
+                      }),
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      success: function () {
+                        renderQuestions()
+                        $('#modal-update').modal('hide')
+                      },
+                      body: JSON.stringify({ description }),
+                      error: function (xhr) {
+                        console.log(xhr.responseText)
+                      },
+                    })
+                  })
+              })
+              .fail((xhr) => {
+                console.log(xhr.responseText)
+              })
+          })
+
+        $('.btn-delete')
+          .off()
+          .on('click', function (event) {
+            event.stopPropagation()
+            const questionId = $(this).data('question-id')
+
+            Swal.fire({
+              title: 'Are you sure you want to delete question?',
+              showCancelButton: true,
+              confirmButtonText: 'Delete',
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
                 $.ajax({
                   url: `/api/question/${questionId}`,
-                  method: 'PUT',
-                  data: JSON.stringify({ questionnaireId: questionnaire.id, categoryId, description }),
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  success: function() {
-                    renderQuestions()
-                    $('#modal-update').modal('hide')
-                  },
-                  body: JSON.stringify({ description }),
-                  error: function(xhr) {
+                  type: 'DELETE',
+                  success: renderQuestions,
+                  error: function (xhr) {
                     console.log(xhr.responseText)
-                  }
+                  },
                 })
-              })
+              }
             })
-            .fail((xhr) => {
-              console.log(xhr.responseText)
-            })
-        })
-
-        $('.btn-delete').off().on('click', function(event) {
-          event.stopPropagation()
-          const questionId = $(this).data('question-id')
-
-          Swal.fire({
-            title: 'Are you sure you want to delete question?',
-            showCancelButton: true,
-            confirmButtonText: 'Delete'
-          }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-              $.ajax({
-                url: `/api/question/${questionId}`,
-                type: 'DELETE',
-                success: renderQuestions,
-                error: function(xhr) {
-                  console.log(xhr.responseText)
-                }
-              })
-            }
           })
-        })
       })
-      .fail(function(xhr) {
+      .fail(function (xhr) {
         console.log(xhr.responseText)
       })
   }

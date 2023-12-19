@@ -57,10 +57,11 @@ class QuestionnaireController extends Controller
         $student = Auth::user()->student;
 
         foreach ($request->all() as $questionId => $scale) {
-            if (!str_starts_with($questionId, 'question-id-')) continue;
-            $questionId = explode('question-id-', $questionId);
+            if (!str_starts_with($questionId, 'question-id-'))
+                continue;
+            $questionId = explode('question-id-', $questionId)[1];
 
-//            dd($scale);
+            // dd($scale);
             Answer::create([
                 'question_id' => $questionId,
                 'student_id' => $student->nim,
