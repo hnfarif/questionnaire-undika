@@ -48,7 +48,7 @@ class QuestionnaireController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $questionnaire = Questionnaire::query()->findOrFail($id);
+        $questionnaire = Questionnaire::findOrFail($id);
         return response()->json($questionnaire);
     }
 
@@ -64,7 +64,7 @@ class QuestionnaireController extends Controller
             'endDate' => 'date',
         ]);
 
-        $questionnaire = Questionnaire::query()->findOrFail($id);
+        $questionnaire = Questionnaire::findOrFail($id);
         $questionnaire->title = $data['title'];
         $questionnaire->description = $data['description'];
         $questionnaire->start_date = $data['startDate'];
@@ -79,7 +79,7 @@ class QuestionnaireController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $questionnaire = Questionnaire::query()->findOrFail($id);
+        $questionnaire = Questionnaire::findOrFail($id);
         $questionnaire->delete();
         return response()->json($questionnaire);
     }
