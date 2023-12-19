@@ -10,4 +10,10 @@ class Answer extends Model
     use HasFactory;
 
     protected array $guard = ['id'];
+
+    protected $fillable = [
+        'question_id',
+        'student_id',
+        'scale'
+    ];
 }

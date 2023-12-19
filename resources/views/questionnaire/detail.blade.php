@@ -3,7 +3,10 @@
 <script>
   const questionnaire = eval({!! json_encode($questionnaire) !!})
 </script>
-@vite(['resources/js/detail-questionnaire.js'])
+@vite([
+'resources/sass/detail-questionnaire.scss',
+'resources/js/detail-questionnaire.js'
+])
 @endpush
 @section('content')
 <div class="container-fluid px-4">
@@ -36,7 +39,27 @@
         <i class="fas fa-table me-1"></i>
         Daftar Pertanyaan
       </div>
-      <button class="btn btn-success ms-auto">Simpan Pertanyaan</button>
+      <div class="d-flex gap-3 ms-auto">
+        @if($questionnaire->status == 'DRAFT')
+        <form method="POST" action="{{ route('questionnaire.submit', ['id' => $questionnaire->id]) }}">
+          @csrf
+          {{ method_field('PATCH') }}
+          <button class="btn btn-success">Submit</button>
+        </form>
+        @endif
+        @if($questionnaire->status == 'SUBMITTED')
+        <form method="POST" action="{{ route('questionnaire.reject', ['id' => $questionnaire->id]) }}">
+          @csrf
+          {{ method_field('PATCH') }}
+          <button class="btn btn-danger">Reject</button>
+        </form>
+        <form method="POST" action="{{ route('questionnaire.approve', ['id' => $questionnaire->id]) }}">
+          @csrf
+          {{ method_field('PATCH') }}
+          <button class="btn btn-warning">Approve</button>
+        </form>
+        @endif
+      </div>
     </div>
     <div class="card-body">
       <div class="accordion" id="accordionPanelsStayOpenExample">

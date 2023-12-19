@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('author_id', 6);
             $table->string('title');
             $table->text('description');
+            $table->enum('status', ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']);
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

@@ -36,6 +36,7 @@ class QuestionnaireController extends Controller
             'author_id' => Auth::user()->id,
             'title' => $data['title'],
             'description' => $data['description'],
+            'status' => 'DRAFT',
             'start_date' => $data['startDate'],
             'end_date' => $data['endDate']
         ]);
