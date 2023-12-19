@@ -12,10 +12,12 @@ return new class extends Migration {
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('questionnaire_id');
             $table->unsignedBigInteger('category_id');
             $table->text('description');
             $table->timestamps();
 
+            $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
             $table->foreign('category_id')->references('id')->on('categories');
         });
     }
