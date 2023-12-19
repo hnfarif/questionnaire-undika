@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('questionnaire_id');
             $table->unsignedBigInteger('category_id');
-            $table->text('description');
+            $table->longText('description');
             $table->timestamps();
 
             $table->foreign('questionnaire_id')->references('id')->on('questionnaires');

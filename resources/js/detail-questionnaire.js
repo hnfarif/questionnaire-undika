@@ -36,6 +36,8 @@ $(function() {
   renderQuestions()
 
   $('.btn-add').on('click', function() {
+    $('#modal-add .ql-editor').empty()
+
     const categoryId = $(this).data('category-id')
     const categoryName = $(this).data('category-name')
 
@@ -90,6 +92,9 @@ $(function() {
 
         $('.question').off().on('click', function(event) {
           event.stopPropagation()
+
+          $('#modal-update .ql-editor').empty()
+
           const questionId = $(this).data('question-id')
           const categoryId = $(this).data('category-id')
 
