@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuestionnaireController;
-use App\Models\Questionnaire;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,8 +22,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::resource('questionnaire', QuestionnaireController::class)->except('create');
+Route::middleware('auth')->controller(QuestionnaireController::class)->group(function () {
+    Route::get('questionnaire', 'index')->name('questionnaire.index');
+    Route::get('questionnaire/{id}', 'show')->name('questionnaire.show');
 });
