@@ -15,7 +15,9 @@
         "glob": "^10.3.10",
         "jquery": "^3.7.1",
         "laravel-vite-plugin": "^0.8.0",
+        "quill": "^1.3.7",
         "sass": "^1.56.1",
+        "sweetalert2": "^11.10.1",
         "vite": "^4.0.0"
     }
 }
