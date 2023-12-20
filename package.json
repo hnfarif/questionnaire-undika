@@ -10,6 +10,7 @@
         "@popperjs/core": "^2.11.6",
         "axios": "^1.6.1",
         "bootstrap": "^5.2.3",
+        "chart.js": "^4.4.1",
         "datatables.net-dt": "^1.13.8",
         "flatpickr": "^4.6.13",
         "glob": "^10.3.10",

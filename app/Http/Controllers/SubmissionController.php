@@ -21,7 +21,7 @@ class SubmissionController extends Controller
 
         $questionnaireId = $request->questionnaireId;
         $submissions = Submission::where('questionnaire_id', '=', $questionnaireId)
-            ->with(['student', 'answers'])
+            ->with(['student', 'answers.question.category'])
             ->get();
         $questions = Question::where('questionnaire_id', '=', $questionnaireId)->get();
 

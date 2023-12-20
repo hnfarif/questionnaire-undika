@@ -1,6 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.layout-dashboard')
 @push('scripts')
-  @vite(['resources/js/submission.js'])
+  @vite([
+    'resources/js/submission.js',
+    'resources/sass/submission.scss'
+  ])
 @endpush
 @section('content')
   <div class="container-fluid px-4">
@@ -57,8 +60,13 @@
                   data-index="{{ $index }}"
                   data-category-id="{{ $question->category->id }}"
                   data-question-id="{{ $question->id }}"
+                  data-question-category="{{ $question->category->name }}"
+                  data-question-description="{{ $question->description }}"
                 >
-                  X<sub>{{ $question->category->id }}</sub> <sub>{{ $categoryCounters[$question->category->id] }}</sub>
+                  <button class="btn btn-light btn-question">
+                    X<sub>{{ $question->category->id }}</sub>
+                    <sub>{{ $categoryCounters[$question->category->id] }}</sub>
+                  </button>
                 </th>
 
                 @php
@@ -73,4 +81,6 @@
       </div>
     </div>
   </div>
+
+  <@include('submission.components.modal-detail')
 @endsection

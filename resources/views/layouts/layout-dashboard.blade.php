@@ -18,9 +18,9 @@
   <!-- Scripts -->
   @vite([
     'resources/sass/app.scss',
-    'resources/sass/dashboard.scss',
+    'resources/sass/layout-dashboard.scss',
     'resources/js/app.js',
-    'resources/js/dashboard.js'
+    'resources/js/layout-dashboard.js'
   ])
   @stack('scripts')
 </head>
@@ -39,13 +39,13 @@
       </button>
 
       <!-- Navbar-->
-      @include('nav/navbar')
+      @include('layouts.components.navbar')
 
     </nav>
     <div id="layoutSidenav">
       @if (Route::has('login'))
         <div id="layoutSidenav_nav">
-          @include('nav/sidenav')
+          @include('layouts.components.sidenav')
         </div>
       @endif
       <div id="layoutSidenav_content">
