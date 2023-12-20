@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('scripts')
-  @vite(['resources/js/questionnaire.js'])
+  @vite(['resources/js/submission.js'])
 @endpush
 @section('content')
   <div class="container-fluid px-4">
@@ -19,7 +19,7 @@
         </ol>
       </div>
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-        <i class="fa-solid fa-plus"></i> Tambah Kuesioner
+        <i class="fa-solid fa-plus"></i> Hitung
       </button>
     </div>
 
@@ -29,15 +29,13 @@
         Daftar Kuesioner
       </div>
       <div class="card-body">
-        <table id="table-questionnaire">
+        <table id="table-submission">
           <thead>
             <tr>
               <th>No</th>
-              <th>Judul</th>
-              <th>Tanggal Mulai</th>
-              <th>Tanggal Selesai</th>
-              <th>Status</th>
-              <th>Aksi</th>
+              <th>Name</th>
+              <th>Nim</th>
+              <th>Jawaban</th>
             </tr>
           </thead>
           <tbody>
@@ -46,7 +44,4 @@
       </div>
     </div>
   </div>
-
-  @include('questionnaire.components.index.modal-add')
-  @include('questionnaire.components.index.modal-update')
 @endsection

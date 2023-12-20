@@ -2,7 +2,6 @@ import 'datatables.net-dt'
 import 'datatables.net-dt/css/jquery.dataTables.css'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
-import { Modal } from 'bootstrap'
 
 $(function () {
   const table = $('#table-questionnaire').DataTable({
@@ -31,19 +30,25 @@ $(function () {
       },
       {
         data: null,
-        render: (data) => {
-          return 'Active'
-        },
+        render: 'status',
       },
       {
         data: null,
         render: (questionnaire) => {
           return `
-          <button class="btn btn-info" id="" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
-          <i class="fa-regular fa-pen-to-square"></i>
-          </button>
-          <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
-          `
+          <div>
+            <button class="btn btn-info" id="" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${
+              questionnaire.id
+            }">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
+            ${
+              questionnaire.status === 'APPROVED'
+                ? `<a href="/submission?questionnaireId=${questionnaire.id}" class="btn btn-primary">Jawaban</a>`
+                : ''
+            }
+          </div>`
         },
       },
     ],

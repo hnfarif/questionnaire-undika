@@ -20,7 +20,7 @@ class LeaderRoleSeeder extends Seeder
         for ($i = 1; $i <= 5; $i++) {
 
             $user = User::create([
-                'id' => fake()->randomNumber(6, true),
+                'id' => $i === 1 ? '123456' : fake()->randomNumber(6, true),
                 'email' => fake()->unique()->safeEmail(),
                 'email_verified_at' => now(),
                 'password' => Hash::make('123456'),

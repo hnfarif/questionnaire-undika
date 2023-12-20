@@ -28,7 +28,7 @@
     </div>
   </section>
   <form class="container-sm p-3" style="max-width: 720px" method="POST"
-    action="{{ route('questionnaire.answer', ['id' => $questionnaire->id]) }}">
+    action="{{ route('submission.store', ['questionnaireId' => $questionnaire->id]) }}">
     @csrf
     @foreach($questions as $question)
     <div class="question card w-100 mb-3" style="width: 18rem;">
