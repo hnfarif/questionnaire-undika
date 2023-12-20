@@ -82,7 +82,7 @@ $(function () {
                 <div class="form-control flex-grow-1">${question.description}</div>
                 <div class="input-group-append my-auto">
                   <button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
-                  <i class="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-trash"></i>
                   </button>
               </div>
             </div>
