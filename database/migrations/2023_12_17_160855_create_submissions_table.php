@@ -13,9 +13,10 @@ return new class extends Migration {
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('questionnaire_id');
-            $table->string('nim', 6);
+            $table->string('nim', 11);
             $table->timestamps();
 
+            $table->unique(['questionnaire_id', 'nim']);
             $table->foreign('questionnaire_id')->references('id')->on('questionnaires');
             $table->foreign('nim')->references('nim')->on('students');
         });
