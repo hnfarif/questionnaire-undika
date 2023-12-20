@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
+use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
@@ -22,8 +23,9 @@ class SubmissionController extends Controller
         $submissions = Submission::where('questionnaire_id', '=', $questionnaireId)
             ->with(['student', 'answers'])
             ->get();
+        $questions = Question::where('questionnaire_id', '=', $questionnaireId)->get();
 
-        return view('submission.index', compact('submissions'));
+        return view('submission.index', compact('submissions', 'questions'));
     }
 
     public function store(Request $request): RedirectResponse
