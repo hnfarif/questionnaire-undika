@@ -4,7 +4,7 @@
 @endpush
 @section('content')
   <div class="container-fluid px-4">
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center gap-3">
       <div class="flex-grow-1">
         <h1 class="mt-4">
           Kuesioner
@@ -19,7 +19,13 @@
         </ol>
       </div>
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-        <i class="fa-solid fa-plus"></i> Hitung
+        Uji Validitas
+      </button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+        Uji Reliabilitas
+      </button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+        Hitung
       </button>
     </div>
 
@@ -33,9 +39,32 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Name</th>
-              <th>Nim</th>
-              <th>Jawaban</th>
+              <th>Nama</th>
+              <th>NIM</th>
+              @php
+                $categoryCounters = [];
+              @endphp
+
+              @foreach($questions as $index => $question)
+                @if (!isset($categoryCounters[$question->category->id]))
+                  @php
+                    $categoryCounters[$question->category->id] = 1;
+                  @endphp
+                @endif
+
+                <th
+                  data-is-question="true"
+                  data-index="{{ $index }}"
+                  data-category-id="{{ $question->category->id }}"
+                  data-question-id="{{ $question->id }}"
+                >
+                  X<sub>{{ $question->category->id }}</sub> <sub>{{ $categoryCounters[$question->category->id] }}</sub>
+                </th>
+
+                @php
+                  $categoryCounters[$question->category->id]++;
+                @endphp
+              @endforeach
             </tr>
           </thead>
           <tbody>
