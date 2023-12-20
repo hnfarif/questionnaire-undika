@@ -26,9 +26,9 @@ $(function() {
       data: null,
       render: (submission) => {
         const answer = submission.answers.find((answer) => answer.question_id === questionId)
-        if (!answer) return 0
+        if (!answer) return `<span class="d-block w-100" style="cursor: pointer">0</span>`
 
-        return answer.scale
+        return `<span class="d-block w-100" style="cursor: pointer">${answer.scale}</span>`
       }
     }]
   })
@@ -40,5 +40,15 @@ $(function() {
       dataSrc: ''
     },
     columns: columns
+  })
+
+  $('.btn-question').on('click', function(event) {
+    event.stopPropagation()
+    $('#modal-detail-question').modal('show')
+
+    const description = $(this).parent().data('question-description')
+    const category = $(this).parent().data('question-category')
+    $('#title-category').text(category)
+    $('#modal-detail-question .modal-body').html(description)
   })
 })
