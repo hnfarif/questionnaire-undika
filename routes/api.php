@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\QuestionnaireController;
+use App\Http\Controllers\Api\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,4 +19,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
     Route::apiResource('questionnaire', QuestionnaireController::class);
     Route::apiResource('question', QuestionController::class);
+    Route::apiResource('submission', SubmissionController::class);
 });
