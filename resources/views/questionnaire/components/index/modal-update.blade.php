@@ -8,6 +8,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="input-edit-id">
         <div class="form-floating mb-3">
           <input type="text" class="form-control" name="title" id="input-edit-title">
           <label for="input-title">Judul Kuesioner</label>
@@ -29,7 +30,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button id="btn-update" type="button" class="btn btn-primary">Tambah</button>
+        <button id="btn-update" type="button" class="btn btn-primary">Ubah</button>
       </div>
     </div>
   </div>

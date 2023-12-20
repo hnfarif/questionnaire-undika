@@ -37,7 +37,7 @@ $(function () {
         render: (questionnaire) => {
           return `
           <div>
-            <button class="btn btn-info" id="" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${
+            <button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${
               questionnaire.id
             }">
               <i class="fa-regular fa-pen-to-square"></i>
@@ -72,6 +72,7 @@ $(function () {
 
   $('#btn-add').on('click', handleAddQuestionnaire)
   $('#btn-update').on('click', handleUpdateQuestionnaire)
+  table.on('click', '.btn-edit', handleEditQuestionnaire)
 
   function handleAddQuestionnaire() {
     const title = $('#input-title').val()
@@ -89,6 +90,25 @@ $(function () {
       .done(() => {
         table.ajax.reload()
         $('#modal-add').modal('hide')
+        $('#input-title').val('')
+        $('#input-description').val('')
+        $('#input-start-date').val('')
+        $('#input-end-date').val('')
+      })
+      .fail((xhr) => {
+        console.log(xhr.responseText)
+      })
+  }
+
+  function handleEditQuestionnaire() {
+    const questionnaireId = $(this).data('id')
+    $.get(`/api/questionnaire/${questionnaireId}`)
+      .done((questionnaire) => {
+        $('#input-edit-id').val(questionnaire.id)
+        $('#input-edit-title').val(questionnaire.title)
+        $('#input-edit-description').val(questionnaire.description)
+        $('#input-edit-start-date').val(questionnaire.start_date)
+        $('#input-edit-end-date').val(questionnaire.end_date)
       })
       .fail((xhr) => {
         console.log(xhr.responseText)
@@ -96,7 +116,7 @@ $(function () {
   }
 
   function handleUpdateQuestionnaire() {
-    const questionnaireId = $(this).data('id')
+    const questionnaireId = $('#input-edit-id').val()
     const title = $('#input-edit-title').val()
     const description = $('#input-edit-description').val()
     const startDate = $('#input-edit-start-date').val()
@@ -116,12 +136,12 @@ $(function () {
       },
       success: function () {
         $('#modal-update').modal('hide')
+        table.ajax.reload()
         $('#input-edit-title').val('')
         $('#input-edit-description').val('')
         $('#input-edit-start-date').val('')
         $('#input-edit-end-date').val('')
       },
-      body: JSON.stringify({ description }),
       error: function (xhr) {
         console.log(xhr.responseText)
       },
