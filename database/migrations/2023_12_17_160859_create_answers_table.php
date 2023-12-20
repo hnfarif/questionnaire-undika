@@ -11,14 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('answers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('submission_id');
             $table->unsignedBigInteger('question_id');
-            $table->string('student_id', 11);
             $table->integer('scale');
             $table->timestamps();
 
-            $table->unique(['question_id', 'student_id']);
+            $table->unique(['submission_id', 'question_id']);
+            $table->foreign('submission_id')->references('id')->on('submissions');
             $table->foreign('question_id')->references('id')->on('questions');
-            $table->foreign('student_id')->references('nim')->on('students');
         });
     }
 

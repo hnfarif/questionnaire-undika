@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,14 +24,21 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('auth')->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->controller(QuestionnaireController::class)->group(function () {
-    Route::get('questionnaire', 'index')->name('questionnaire.index');
-    Route::get('questionnaire/{id}', 'show')->name('questionnaire.show');
-    Route::get('questionnaire/{id}/question', 'question')->name('questionnaire.question');
-    Route::post('questionnaire/{id}/answer', 'answer')->name('questionnaire.answer');
-    Route::patch('questionnaire/{id}/submit', 'submit')->name('questionnaire.submit');
-    Route::patch('questionnaire/{id}/approve', 'approve')->name('questionnaire.approve');
-    Route::patch('questionnaire/{id}/reject', 'reject')->name('questionnaire.reject');
+    Route::get('/questionnaire', 'index')->name('questionnaire.index');
+    Route::get('/questionnaire/{questionnaire}', 'show')->name('questionnaire.show');
+    Route::patch('/questionnaire/{questionnaire}/submit', 'submit')->name('questionnaire.submit');
+    Route::patch('/questionnaire/{questionnaire}/approve', 'approve')->name('questionnaire.approve');
+    Route::patch('/questionnaire/{questionnaire}/reject', 'reject')->name('questionnaire.reject');
+});
+
+Route::middleware('auth')->controller(QuestionController::class)->group(function () {
+    Route::get('/question', 'index')->name('question.index');
+});
+
+Route::middleware('auth')->controller(SubmissionController::class)->group(function () {
+    Route::get('/submission', 'index')->name('submission.index');
+    Route::post('/submission', 'store')->name('submission.store');
 });
