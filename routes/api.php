@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AnswerController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\QuestionnaireController;
 use App\Http\Controllers\Api\SubmissionController;
@@ -20,4 +21,5 @@ Route::middleware('auth')->group(function () {
     Route::apiResource('questionnaire', QuestionnaireController::class);
     Route::apiResource('question', QuestionController::class);
     Route::apiResource('submission', SubmissionController::class);
+    Route::apiResource('answer', AnswerController::class);
 });
