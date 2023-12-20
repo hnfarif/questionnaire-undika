@@ -4,55 +4,69 @@ import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
 import { Modal } from 'bootstrap'
 
-$(function() {
+$(function () {
   const table = $('#table-questionnaire').DataTable({
     ajax: {
       method: 'GET',
       url: 'api/questionnaire',
-      dataSrc: ''
+      dataSrc: '',
     },
     columns: [
       {
         data: null,
         render: (data, row, type, meta) => {
           return meta.row + 1
-        }
+        },
       },
       {
-        data: 'title'
-      },
-      {
-        data: null,
-        render: 'start_date'
+        data: 'title',
       },
       {
         data: null,
-        render: 'end_date'
+        render: 'start_date',
+      },
+      {
+        data: null,
+        render: 'end_date',
       },
       {
         data: null,
         render: (data) => {
           return 'Active'
-        }
+        },
       },
       {
         data: null,
         render: (questionnaire) => {
-          return `<a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>`
-        }
-      }
-    ]
+          return `
+          <button class="btn btn-info" id="" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
+          <i class="fa-regular fa-pen-to-square"></i>
+          </button>
+          <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
+          `
+        },
+      },
+    ],
   })
 
   flatpickr('#input-start-date', {
-    minDate: 'today'
+    minDate: 'today',
   })
 
   flatpickr('#input-end-date', {
-    minDate: 'today'
+    minDate: 'today',
+  })
+
+  flatpickr('#input-edit-start-date', {
+    minDate: 'today',
+  })
+
+  flatpickr('#input-edit-end-date', {
+    minDate: 'today',
   })
 
   $('#btn-add').on('click', handleAddQuestionnaire)
+  $('#btn-update').on('click', handleUpdateQuestionnaire)
 
   function handleAddQuestionnaire() {
     const title = $('#input-title').val()
@@ -64,8 +78,8 @@ $(function() {
       url: '/api/questionnaire',
       data: JSON.stringify({ title, description, startDate, endDate }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
       .done(() => {
         table.ajax.reload()
@@ -74,5 +88,38 @@ $(function() {
       .fail((xhr) => {
         console.log(xhr.responseText)
       })
+  }
+
+  function handleUpdateQuestionnaire() {
+    const questionnaireId = $(this).data('id')
+    const title = $('#input-edit-title').val()
+    const description = $('#input-edit-description').val()
+    const startDate = $('#input-edit-start-date').val()
+    const endDate = $('#input-edit-end-date').val()
+
+    $.ajax({
+      url: `/api/questionnaire/${questionnaireId}`,
+      method: 'PUT',
+      data: JSON.stringify({
+        title,
+        description,
+        startDate,
+        endDate,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      success: function () {
+        $('#modal-update').modal('hide')
+        $('#input-edit-title').val('')
+        $('#input-edit-description').val('')
+        $('#input-edit-start-date').val('')
+        $('#input-edit-end-date').val('')
+      },
+      body: JSON.stringify({ description }),
+      error: function (xhr) {
+        console.log(xhr.responseText)
+      },
+    })
   }
 })
