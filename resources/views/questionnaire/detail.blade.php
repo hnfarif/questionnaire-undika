@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.layout-dashboard')
 @push('scripts')
   <script>
     const questionnaire = eval({!! json_encode($questionnaire) !!})

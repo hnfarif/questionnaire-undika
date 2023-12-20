@@ -1,14 +1,34 @@
-import $ from 'jquery'
+import Chart from 'chart.js/auto'
 
-$(function () {
-    const sidebarToggle = $('#sidebarToggle');
-    if (sidebarToggle.length) {
-
-        sidebarToggle.on('click', function (event) {
-            const body = $('body')
-            event.preventDefault();
-            body.toggleClass('sb-sidenav-toggled');
-            localStorage.setItem('sb|sidebar-toggle', body.hasClass('sb-sidenav-toggled'));
-        });
+$(function() {
+  const options = {
+    type: 'line',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [
+        {
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1
+        },
+        {
+          label: '# of Points',
+          data: [7, 11, 5, 8, 3, 7],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            reverse: false
+          }
+        }]
+      }
     }
-});
+  }
+
+  const ctx = document.getElementById('chartJSContainer').getContext('2d')
+  new Chart(ctx, options)
+})

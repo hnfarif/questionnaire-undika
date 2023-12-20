@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.layout-dashboard')
 @push('scripts')
   @vite([
     'resources/js/submission.js',
