@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
+use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Submission;
@@ -25,7 +26,9 @@ class SubmissionController extends Controller
             ->get();
         $questions = Question::where('questionnaire_id', '=', $questionnaireId)->get();
 
-        return view('submission.index', compact('submissions', 'questions'));
+        $categories = Category::orderBy('id', 'asc')->get();
+
+        return view('submission.index', compact('submissions', 'questions', 'categories'));
     }
 
     public function store(Request $request): RedirectResponse

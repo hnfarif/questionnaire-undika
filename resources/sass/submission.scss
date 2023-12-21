@@ -1,11 +1,33 @@
-.btn-question {
-    font-weight: bold;
+#modal-detail-question {
+  .modal-body {
+    img {
+      max-width: 100%;
+    }
+  }
 }
 
-#modal-detail-question {
-    .modal-body {
-        img {
-            max-width: 100%;
-        }
+.btn-question {
+  font-weight: bold;
+  background-color: transparent !important;
+}
+
+#table-submission {
+  th,
+  tr,
+  td {
+    background-color: white;
+    transition: all 0.5s;
+    max-width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    &[data-is-question='true'] {
+      padding-left: 0;
+      padding-right: 0;
     }
+  }
+}
+
+table {
+  max-width: 100%;
 }
