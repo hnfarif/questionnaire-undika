@@ -109,4 +109,6 @@ $(function () {
     $('#title-category').text(category)
     $('#modal-detail-question .modal-body').html(description)
   }
+
+  $('tfoot th[data-is-xiyi="true"]').each(function () {})
 })

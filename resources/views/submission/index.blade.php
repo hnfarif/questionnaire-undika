@@ -80,7 +80,7 @@
               @endphp
               <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-total="true"
                 data-category-id="{{ $question->category->id }}">
-                ΣX<sub>i</sub>Y<sub>i</sub>
+                ΣX<sub>i</sub> (Y<sub>i</sub>)
               </th>
 
               @endif
@@ -111,19 +111,70 @@
               @endphp
               @endif
 
-              <th data-is-question="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
+              <th data-is-xiyi="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
                 data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
                 data-question-description="{{ $question->description }}">
-                4
+                {{ $Σxiyi[$question->category->id."-".$question->id] }}
               </th>
+
+              @if(count(collect($questions)->filter(function($q) use ($question){
+              return $q->category->id === $question->category->id;
+              })) === $questionCounters[$question->category->id])
+              @php
+              $index++
+              @endphp
+              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-xiyi-total="true"
+                data-category-id="{{ $question->category->id }}">
+
+              </th>
+              @endif
 
               @php
               $questionCounters[$question->category->id]++;
               $index++;
               @endphp
               @endforeach
-              <th>1</th>
             </tr>
+            {{-- <tr>
+              <th colspan="3" style="text-align: right">
+                Total ΣX<sub>i</sub>Y<sub>i</sub>
+              </th>
+              @php
+              $questionCounters = [];
+              $index = 3;
+              @endphp
+
+              @foreach($questions as $question)
+              @if (!isset($questionCounters[$question->category->id]))
+              @php
+              $questionCounters[$question->category->id] = 1;
+              @endphp
+              @endif
+
+              <th data-is-xiyi="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
+                data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
+                data-question-description="{{ $question->description }}">
+                {{ $Σxiyi[$question->category->id."-".$question->id] }}
+              </th>
+
+              @if(count(collect($questions)->filter(function($q) use ($question){
+              return $q->category->id === $question->category->id;
+              })) === $questionCounters[$question->category->id])
+              @php
+              $index++
+              @endphp
+              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-xiyi-total="true"
+                data-category-id="{{ $question->category->id }}">
+                ?
+              </th>
+              @endif
+
+              @php
+              $questionCounters[$question->category->id]++;
+              $index++;
+              @endphp
+              @endforeach
+            </tr> --}}
           </tfoot>
         </table>
       </div>

@@ -12,9 +12,29 @@ class AnswerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Answer::query()->with(['question', 'submission']);
+
+        if ($request->has('questionnaireId')) {
+            $query->whereHas('submission', function ($subQuery) use ($request) {
+                $subQuery->where('questionnaire_id', $request->questionnaireId);
+            });
+        }
+
+        if ($request->has('questionId')) {
+            $query->where('question_id', $request->questionId);
+        }
+
+        if ($request->has('categoryId')) {
+            $query->whereHas('question', function ($subQuery) use ($request) {
+                $subQuery->where('category_id', $request->categoryId);
+            });
+        }
+
+        $answers = $query->get();
+
+        return response()->json($answers);
     }
 
     /**
