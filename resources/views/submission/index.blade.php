@@ -80,7 +80,7 @@
               @endphp
               <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-total="true"
                 data-category-id="{{ $question->category->id }}">
-                ΣX<sub>i</sub>Y<sub>i</sub>
+                ΣX<sub>i</sub>
               </th>
 
               @endif
@@ -94,37 +94,6 @@
           </thead>
           <tbody>
           </tbody>
-          <tfoot>
-            <tr>
-              <th colspan="3" style="text-align: right">
-                ΣX<sub>i</sub>Y<sub>i</sub>
-              </th>
-              @php
-              $questionCounters = [];
-              $index = 3;
-              @endphp
-
-              @foreach($questions as $question)
-              @if (!isset($questionCounters[$question->category->id]))
-              @php
-              $questionCounters[$question->category->id] = 1;
-              @endphp
-              @endif
-
-              <th data-is-question="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
-                data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
-                data-question-description="{{ $question->description }}">
-                4
-              </th>
-
-              @php
-              $questionCounters[$question->category->id]++;
-              $index++;
-              @endphp
-              @endforeach
-              <th>1</th>
-            </tr>
-          </tfoot>
         </table>
       </div>
     </div>
