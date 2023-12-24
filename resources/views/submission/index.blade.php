@@ -40,8 +40,8 @@
     </div>
     <div class="card-body">
       <select id="select-category" class="ms-3" style="max-width: 120px;">
-        @foreach($categories as $category)
-        <option value="{{ $category->id }}">{{ $category->name }}</option>
+        @foreach($categories as $index => $category)
+        <option {{ $index===0 ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
         @endforeach
       </select>
       <div class="table-responsive">
@@ -53,17 +53,16 @@
               <th>NIM</th>
               @php
               $questionCounters = [];
-              $index = 3;
               @endphp
 
-              @foreach($questions as $question)
+              @foreach($questions as $index=> $question)
               @if (!isset($questionCounters[$question->category->id]))
               @php
               $questionCounters[$question->category->id] = 1;
               @endphp
               @endif
 
-              <th data-is-question="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
+              <th data-is-question="true" data-index="{{ $index +3 }}" data-category-id="{{ $question->category->id }}"
                 data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
                 data-question-description="{{ $question->description }}">
                 <button class="btn btn-light btn-question text-nowrap">
@@ -71,19 +70,6 @@
                   <sub>{{ $questionCounters[$question->category->id] }}</sub>
                 </button>
               </th>
-
-              @if(count(collect($questions)->filter(function($q) use ($question){
-              return $q->category->id === $question->category->id;
-              })) === $questionCounters[$question->category->id])
-              @php
-              $index++
-              @endphp
-              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-total="true"
-                data-category-id="{{ $question->category->id }}">
-                ΣX<sub>i</sub>
-              </th>
-
-              @endif
 
               @php
               $questionCounters[$question->category->id]++;
@@ -94,6 +80,14 @@
           </thead>
           <tbody>
           </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="3" style="text-align: right">R<sub>x</sub><sub>y</sub></th>
+              @foreach($questions as $index=> $question)
+              <th>{{ number_format($rxy[$question->id], 2) }}</th>
+              @endforeach
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

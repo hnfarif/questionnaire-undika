@@ -22,36 +22,19 @@ $(function () {
   ]
 
   $('thead th[data-is-question="true"]').each(function () {
-    const isTotal = $(this).data('is-total')
-    const categoryId = parseInt($(this).data('category-id'))
-    if (isTotal) {
-      columns = [
-        ...columns,
-        {
-          data: null,
-          render: (submission) => {
-            const sum = submission.answers
-              .filter((answer) => answer.question.category.id === categoryId)
-              .reduce((count, answer) => answer.scale + count, 0)
-            return sum
-          },
-        },
-      ]
-    } else {
-      const questionId = parseInt($(this).data('question-id'))
-      columns = [
-        ...columns,
-        {
-          data: null,
-          render: (submission) => {
-            const answer = submission.answers.find((answer) => answer.question_id === questionId)
-            if (!answer) return `<span class="d-block w-100" style="cursor: pointer">0</span>`
+    const questionId = parseInt($(this).data('question-id'))
+    columns = [
+      ...columns,
+      {
+        data: null,
+        render: (submission) => {
+          const answer = submission.answers.find((answer) => answer.question_id === questionId)
+          if (!answer) return `<span class="d-block w-100" style="cursor: pointer">0</span>`
 
-            return `<span class="d-block w-100" style="cursor: pointer">${answer.scale}</span>`
-          },
+          return `<span class="d-block w-100" style="cursor: pointer">${answer.scale}</span>`
         },
-      ]
-    }
+      },
+    ]
   })
 
   const table = $('#table-submission').DataTable({
@@ -61,12 +44,6 @@ $(function () {
       dataSrc: '',
     },
     columns: columns,
-  })
-
-  const indexes = [0, 1, 2, 3, 4, 5, 6]
-
-  table.columns().every(function () {
-    this.visible(indexes.includes(this.index()))
   })
 
   $('.btn-question').off().on('click', handleShowQuestion)
@@ -99,6 +76,8 @@ $(function () {
 
     $('.btn-question').off().on('click', handleShowQuestion)
   })
+
+  $('#select-category').trigger('change')
 
   function handleShowQuestion(event) {
     event.stopPropagation()

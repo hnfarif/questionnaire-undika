@@ -28,7 +28,67 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        return view('submission.index', compact('submissions', 'questions', 'categories'));
+        $rxy = $this->getRxy($questions, $submissions);
+
+        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy'));
+    }
+
+    private function getRxy($questions, $submissions)
+    {
+        $listRxy = [];
+        $n = $submissions->count(); //benar
+
+        $dns = [];
+
+        foreach ($questions as $question) {
+            $yi = 0;
+            $sumxi = 0; // benar
+            $sumyi = 0; //benar
+            $sumxi = 0; // benar
+            $sumxiyi = 0;
+            $sumxi2 = 0;
+            $sumyi2 = 0;
+
+            $answers = Answer::query()
+                ->with(['question', 'submission'])
+                ->where('question_id', '=', $question->id)
+                ->whereHas('question', function ($subQuery) use ($question) {
+                    $subQuery->where('category_id', $question->category_id);
+                })
+                ->get();
+            $sumxi = $answers->sum('scale');
+
+            foreach ($answers as $answer) {
+                $yi = Answer::query()
+                    ->with(['question', 'submission'])
+                    ->whereHas('question', function ($subQuery) use ($answer) {
+                        $subQuery->where('category_id', $answer->question->category_id);
+                    })
+                    ->whereHas('submission', function ($subQuery) use ($answer) {
+                        $subQuery->where('nim', $answer->submission->nim)
+                            ->where('id', $answer->submission->id);
+                    })
+                    ->sum('scale');
+
+
+                $sumyi += $yi;
+                $sumyi2 += pow($yi, 2);
+                $sumxiyi += $sumyi * $answer->scale;
+                $sumxi2 += pow($answer->scale, 2);
+            }
+
+
+            $powsumxi = pow($sumxi, 2);
+            $powsumyi = pow($sumyi, 2);
+            $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
+            $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
+            $rxy = $numerator / $denominator;
+            array_push($dns, "$rxy = $numerator / $denominator => $n * $sumxiyi - ($sumxi * $sumyi) / ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi)");
+            $listRxy[$question->id] = $rxy;
+            // return $denominator;
+        }
+
+        return $listRxy;
     }
 
     public function store(Request $request): RedirectResponse
