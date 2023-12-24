@@ -28,9 +28,9 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        // dd($this->getRxy($questions, $submissions));
+        $rxy = $this->getRxy($questions, $submissions);
 
-        return view('submission.index', compact('submissions', 'questions', 'categories'));
+        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy'));
     }
 
     private function getRxy($questions, $submissions)
@@ -38,10 +38,13 @@ class SubmissionController extends Controller
         $listRxy = [];
         $n = $submissions->count(); //benar
 
+        $dns = [];
+
         foreach ($questions as $question) {
-            $xi = 0; // benar
-            $sumyi = 0; // benar
-            $sumxi = 0;
+            $yi = 0;
+            $sumxi = 0; // benar
+            $sumyi = 0; //benar
+            $sumxi = 0; // benar
             $sumxiyi = 0;
             $sumxi2 = 0;
             $sumyi2 = 0;
@@ -53,32 +56,36 @@ class SubmissionController extends Controller
                     $subQuery->where('category_id', $question->category_id);
                 })
                 ->get();
-            $xi = $answers->sum('scale');
+            $sumxi = $answers->sum('scale');
 
             foreach ($answers as $answer) {
                 $yi = Answer::query()
                     ->with(['question', 'submission'])
-                    ->whereHas('submission', function ($subQuery) use ($answer) {
-                        $subQuery->where('nim', $answer->submission->nim);
-                    })
                     ->whereHas('question', function ($subQuery) use ($answer) {
                         $subQuery->where('category_id', $answer->question->category_id);
                     })
+                    ->whereHas('submission', function ($subQuery) use ($answer) {
+                        $subQuery->where('nim', $answer->submission->nim)
+                            ->where('id', $answer->submission->id);
+                    })
                     ->sum('scale');
-                $sumyi += $yi * $answer->scale;
+
+
+                $sumyi += $yi;
+                $sumyi2 += pow($yi, 2);
                 $sumxiyi += $sumyi * $answer->scale;
-                $sumxi2 += pow(2, $answer->scale);
-                $sumyi2 += pow(2, $yi);
+                $sumxi2 += pow($answer->scale, 2);
             }
 
-            $sumxi = pow(2, $xi);
-            $powsumyi = pow(2, $sumyi);
-            $numerator = $n * $sumxiyi - ($xi * $sumyi);
-            $denominator = sqrt(($n * $sumxi2 - $sumxi) * ($n * $sumyi2 - $powsumyi));
 
+            $powsumxi = pow($sumxi, 2);
+            $powsumyi = pow($sumyi, 2);
+            $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
+            $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
             $rxy = $numerator / $denominator;
+            array_push($dns, "$rxy = $numerator / $denominator => $n * $sumxiyi - ($sumxi * $sumyi) / ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi)");
             $listRxy[$question->id] = $rxy;
-            // return $sumxi;
+            // return $denominator;
         }
 
         return $listRxy;
