@@ -91,6 +91,36 @@ class SubmissionController extends Controller
         return $listRxy;
     }
 
+    private function getR($submissions, $categories, $questions)
+    {
+        $n = $submissions->count();
+        $listR = [];
+
+        foreach ($categories as $category) {
+            $k = $questions->where('category_id', $category->id)->count();
+            $sumvariants = 0;
+
+            foreach ($questions as $question) {
+                $sumxi = 0;
+                $sumxi2 = 0;
+                $variant = 0;
+
+                if ($question->category_id === $category->id) {
+                    $answers = Answer::query()->where('question_id', $question->id)->get();
+                    foreach ($answers as $answer) {
+                        $sumxi += $answer->scale;
+                        $sumxi2 += pow($answer->scale, 2);
+                    }
+                }
+
+                $variant = ($sumxi2 - pow($sumxi, 2) / $n) / $n;
+                $sumvariants += $variant;
+            }
+
+            $listR[$category->id] = ($k / ($k - 1)) * (1 - $sumvariants);
+        }
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([

@@ -84,7 +84,8 @@
             <tr>
               <th colspan="3" style="text-align: right">R<sub>x</sub><sub>y</sub></th>
               @foreach($questions as $index=> $question)
-              <th>{{ number_format($rxy[$question->id], 2) }}</th>
+              <th>{{ number_format($rxy[$question->id],
+                2) }}</th>
               @endforeach
             </tr>
           </tfoot>
