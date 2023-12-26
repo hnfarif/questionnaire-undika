@@ -28,9 +28,12 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        $rxy = $this->getRxy($questions, $submissions);
+        $rxy = [];
+        $r = $this->getR($submissions, $categories, $questions);
 
-        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy'));
+        dd($r);
+
+        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
     private function getRxy($questions, $submissions)
@@ -99,17 +102,20 @@ class SubmissionController extends Controller
         foreach ($categories as $category) {
             $k = $questions->where('category_id', $category->id)->count();
             $sumvariants = 0;
+            $sumscale = 0;
+            $sumscale2 = 0;
 
             foreach ($questions as $question) {
                 $sumxi = 0;
                 $sumxi2 = 0;
-                $variant = 0;
 
                 if ($question->category_id === $category->id) {
                     $answers = Answer::query()->where('question_id', $question->id)->get();
                     foreach ($answers as $answer) {
                         $sumxi += $answer->scale;
                         $sumxi2 += pow($answer->scale, 2);
+                        $sumscale += $answer->scale;
+                        $sumscale2 += pow($answer->scale, 2);
                     }
                 }
 
@@ -117,8 +123,12 @@ class SubmissionController extends Controller
                 $sumvariants += $variant;
             }
 
-            $listR[$category->id] = ($k / ($k - 1)) * (1 - $sumvariants);
+            $i13 = ($sumscale2 - (pow($sumscale, 2) / $k)) / $k;
+
+            $listR[$category->id] = ($k / ($k - 1)) * (1 - ($sumvariants / $i13));
         }
+
+        return $listR;
     }
 
     public function store(Request $request): RedirectResponse
