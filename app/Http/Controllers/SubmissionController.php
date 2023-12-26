@@ -28,10 +28,8 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        $rxy = [];
+        $rxy = $this->getRxy($questions, $submissions);
         $r = $this->getR($submissions, $categories, $questions);
-
-        dd($r);
 
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
