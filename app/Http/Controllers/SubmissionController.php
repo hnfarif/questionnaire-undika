@@ -31,8 +31,6 @@ class SubmissionController extends Controller
         $rxy = [];
         $r = $this->getR($submissions, $categories, $questions);
 
-        dd($r);
-
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
