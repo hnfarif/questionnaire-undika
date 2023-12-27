@@ -30,7 +30,7 @@ class SubmissionController extends Controller
 
         $rxy = $this->getRxy($questions, $submissions);
         $r = $this->getR($submissions, $categories, $questions);
-
+        dd($r);
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
@@ -112,8 +112,20 @@ class SubmissionController extends Controller
                     foreach ($answers as $answer) {
                         $sumxi += $answer->scale;
                         $sumxi2 += pow($answer->scale, 2);
-                        $sumscale += $answer->scale;
-                        $sumscale2 += pow($answer->scale, 2);
+
+                        $sumByNim = Answer::query()
+                            ->with(['question', 'submission'])
+                            ->whereHas('question', function ($subQuery) use ($answer) {
+                                $subQuery->where('category_id', $answer->question->category_id);
+                            })
+                            ->whereHas('submission', function ($subQuery) use ($answer) {
+                                $subQuery->where('nim', $answer->submission->nim)
+                                    ->where('id', $answer->submission->id);
+                            })
+                            ->sum('scale');
+
+                        $sumscale += $sumByNim;
+                        $sumscale2 += pow($sumscale, 2);
                     }
                 }
 
@@ -121,7 +133,7 @@ class SubmissionController extends Controller
                 $sumvariants += $variant;
             }
 
-            $i13 = ($sumscale2 - (pow($sumscale, 2) / $k)) / $k;
+            $i13 = ($sumscale2 - (pow($sumscale, 2) / $n)) / $n;
 
             $listR[$category->id] = ($k / ($k - 1)) * (1 - ($sumvariants / $i13));
         }

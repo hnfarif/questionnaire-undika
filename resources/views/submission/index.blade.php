@@ -23,13 +23,7 @@
       </ol>
     </div>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-      Uji Validitas
-    </button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-      Uji Reliabilitas
-    </button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-      Hitung
+      Analisis Deskriptif
     </button>
   </div>
 
