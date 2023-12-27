@@ -1,8 +1,8 @@
-import 'datatables.net-dt'
-import 'datatables.net-dt/css/jquery.dataTables.css'
+import 'datatables.net-bs5'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
+import PerfectScrollbar from 'perfect-scrollbar'
 
-$(function () {
+$(function() {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const questionnaireId = urlSearchParams.get('questionnaireId')
 
@@ -11,17 +11,17 @@ $(function () {
       data: null,
       render: (data, row, type, meta) => {
         return meta.row + 1
-      },
+      }
     },
     {
-      data: 'student.name',
+      data: 'student.name'
     },
     {
-      data: 'student.nim',
-    },
+      data: 'student.nim'
+    }
   ]
 
-  $('thead th[data-is-question="true"]').each(function () {
+  $('thead th[data-is-question="true"]').each(function() {
     const questionId = parseInt($(this).data('question-id'))
     columns = [
       ...columns,
@@ -32,8 +32,8 @@ $(function () {
           if (!answer) return `<span class="d-block w-100" style="cursor: pointer">0</span>`
 
           return `<span class="d-block w-100" style="cursor: pointer">${answer.scale}</span>`
-        },
-      },
+        }
+      }
     ]
   })
 
@@ -41,15 +41,20 @@ $(function () {
     ajax: {
       method: 'GET',
       url: `/api/submission?questionnaireId=${questionnaireId}`,
-      dataSrc: '',
+      dataSrc: ''
     },
     columns: columns,
+    initComplete: () => {
+      $('#select-category').appendTo('#table-submission_length')
+    }
   })
 
-  $('.btn-question').off().on('click', handleShowQuestion)
+  $('#select-category')
+    .on('change', handleChangeCategory)
+    .trigger('change')
 
-  $('#select-category').on('change', function (event) {
-    table.columns().every(function () {
+  function handleChangeCategory(event) {
+    table.columns().every(function() {
       this.visible(true)
     })
 
@@ -60,24 +65,22 @@ $(function () {
         2,
         ...[
           ...$('th[data-category-id]')
-            .filter(function () {
+            .filter(function() {
               return parseInt($(this).data('category-id')) === parseInt(event.target.value)
             })
-            .map(function () {
+            .map(function() {
               return parseInt($(this).data('index'))
-            }),
-        ],
-      ]),
+            })
+        ]
+      ])
     ]
 
-    table.columns().every(function () {
+    table.columns().every(function() {
       this.visible(indexes.includes(this.index()))
     })
 
     $('.btn-question').off().on('click', handleShowQuestion)
-  })
-
-  $('#select-category').trigger('change')
+  }
 
   function handleShowQuestion(event) {
     event.stopPropagation()
