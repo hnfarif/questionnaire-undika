@@ -30,22 +30,19 @@ class SubmissionController extends Controller
 
         $rxy = $this->getRxy($questions, $submissions);
         $r = $this->getR($submissions, $categories, $questions);
-        dd($r);
+
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
-    private function getRxy($questions, $submissions)
+    private function getRxy($questions, $submissions): array
     {
         $listRxy = [];
-        $n = $submissions->count(); //benar
+        $n = $submissions->count();
 
         $dns = [];
 
         foreach ($questions as $question) {
-            $yi = 0;
-            $sumxi = 0; // benar
-            $sumyi = 0; //benar
-            $sumxi = 0; // benar
+            $sumyi = 0;
             $sumxiyi = 0;
             $sumxi2 = 0;
             $sumyi2 = 0;
@@ -86,7 +83,6 @@ class SubmissionController extends Controller
             $rxy = $numerator / $denominator;
             array_push($dns, "$rxy = $numerator / $denominator => $n * $sumxiyi - ($sumxi * $sumyi) / ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi)");
             $listRxy[$question->id] = $rxy;
-            // return $denominator;
         }
 
         return $listRxy;

@@ -31,3 +31,45 @@
 table {
   max-width: 100%;
 }
+
+.table-responsive {
+    overflow-x: inherit;
+}
+
+#select-category {
+    margin-left: 8px;
+}
+
+#table-submission_wrapper {
+    .dataTables_length {
+        display: flex;
+        gap: 16px;
+    }
+    .row:not(.dt-row) {
+        display: flex;
+        justify-content: space-between;
+
+        & > *:first-child {
+            display: flex;
+            justify-content: start;
+        }
+
+        & > *:last-child {
+            display: flex;
+            justify-content: end;
+        }
+    }
+}
+
+.table-responsive {
+    select {
+        min-width: 80px;
+    }
+
+   label {
+       display: flex;
+       margin-bottom: 16px;
+       align-items: center;
+       gap: 8px;
+   }
+}
