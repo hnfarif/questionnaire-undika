@@ -12,7 +12,7 @@ class Questionnaire extends Model
     protected array $guard = ['id'];
 
     protected $fillable = [
-        'author_id',
+        'study_program_id',
         'title',
         'description',
         'start_date',

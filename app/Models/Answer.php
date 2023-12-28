@@ -22,7 +22,7 @@ class Answer extends Model
     {
         return $this->belongsTo(Submission::class, 'submission_id', 'id');
     }
-    
+
     public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class, 'question_id', 'id');

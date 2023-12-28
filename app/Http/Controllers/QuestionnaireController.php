@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
+use App\Models\StudyProgram;
 use DateTime;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +21,11 @@ class QuestionnaireController extends Controller
      */
     public function index(): View
     {
+        if (Auth::user()->roles->first()->name === "KAPRODI") {
+            $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
+            $questionnaireCount = Questionnaire::whereStudyProgramId($studyProgramId)->count();
+            return view("questionnaire.index", compact("questionnaireCount"));
+        }
         return view("questionnaire.index");
     }
 

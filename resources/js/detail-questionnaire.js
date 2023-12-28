@@ -1,3 +1,4 @@
+import { getJSON } from 'jquery'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import Swal from 'sweetalert2'
@@ -69,6 +70,8 @@ $(function () {
   }
 
   function renderQuestions() {
+    const role = $('#body-section').data('role')
+    console.log(role)
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
       .done(function (questions) {
         $('.question-item').empty()
@@ -78,12 +81,19 @@ $(function () {
               id="question-${question.id}"
               data-question-id="${question.id}"
               data-category-id="${question.category_id}"
-              class="question input-group gap-3 mb-3">
-                <div class="form-control flex-grow-1" style="cursor: text">${question.description}</div>
+              class="${role === 'KAPRODI' ? 'question' : ''} input-group gap-3 mb-3">
+                <div class="form-control flex-grow-1" style="cursor: text">${
+                  question.description
+                }</div>
                 <div class="input-group-append my-auto">
-                  <button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
+                  ${
+                    role === 'KAPRODI'
+                      ? `<button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>`
+                      : ''
+                  }
+
               </div>
             </div>
           `)
