@@ -1,5 +1,4 @@
-import 'datatables.net-dt'
-import 'datatables.net-dt/css/jquery.dataTables.css'
+import 'datatables.net-bs5'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
 
