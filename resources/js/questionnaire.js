@@ -2,71 +2,73 @@ import 'datatables.net-bs5'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
 
-$(function () {
+$(function() {
   const table = $('#table-questionnaire').DataTable({
     ajax: {
       method: 'GET',
       url: 'api/questionnaire',
-      dataSrc: '',
+      dataSrc: ''
     },
     columns: [
       {
         data: null,
         render: (data, row, type, meta) => {
           return meta.row + 1
-        },
+        }
       },
       {
-        data: 'title',
-      },
-      {
-        data: null,
-        render: 'start_date',
+        data: 'title'
       },
       {
         data: null,
-        render: 'end_date',
+        render: 'start_date'
       },
       {
         data: null,
-        render: 'status',
+        render: 'end_date'
+      },
+      {
+        data: null,
+        render: 'status'
       },
       {
         data: null,
         render: (questionnaire) => {
           return `
-          <div>
-            <button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${
-              questionnaire.id
-            }">
-              <i class="fa-regular fa-pen-to-square"></i>
-            </button>
+          <div class="d-flex gap-1">
+            <button
+              class="btn btn-info btn-edit"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-update"
+              data-id="${questionnaire.id}">
+                <i class="fa-regular fa-pen-to-square"></i>
+             </button>
             <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
             ${
-              questionnaire.status === 'APPROVED'
-                ? `<a href="/submission?questionnaireId=${questionnaire.id}" class="btn btn-primary">Jawaban</a>`
-                : ''
-            }
+            questionnaire.status === 'APPROVED'
+              ? `<a href="/submission?questionnaireId=${questionnaire.id}" class="btn btn-primary">Jawaban</a>`
+              : ''
+          }
           </div>`
-        },
-      },
-    ],
+        }
+      }
+    ]
   })
 
   flatpickr('#input-start-date', {
-    minDate: 'today',
+    minDate: 'today'
   })
 
   flatpickr('#input-end-date', {
-    minDate: 'today',
+    minDate: 'today'
   })
 
   flatpickr('#input-edit-start-date', {
-    minDate: 'today',
+    minDate: 'today'
   })
 
   flatpickr('#input-edit-end-date', {
-    minDate: 'today',
+    minDate: 'today'
   })
 
   $('#btn-add').on('click', handleAddQuestionnaire)
@@ -83,8 +85,8 @@ $(function () {
       url: '/api/questionnaire',
       data: JSON.stringify({ title, description, startDate, endDate }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     })
       .done(() => {
         table.ajax.reload()
@@ -128,12 +130,12 @@ $(function () {
         title,
         description,
         startDate,
-        endDate,
+        endDate
       }),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      success: function () {
+      success: function() {
         $('#modal-update').modal('hide')
         table.ajax.reload()
         $('#input-edit-title').val('')
@@ -141,9 +143,9 @@ $(function () {
         $('#input-edit-start-date').val('')
         $('#input-edit-end-date').val('')
       },
-      error: function (xhr) {
+      error: function(xhr) {
         console.log(xhr.responseText)
-      },
+      }
     })
   }
 })
