@@ -23,3 +23,5 @@ Route::middleware('auth')->group(function () {
     Route::apiResource('submission', SubmissionController::class);
     Route::apiResource('answer', AnswerController::class);
 });
+
+Route::apiResource('answer', AnswerController::class);

@@ -10,14 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('questionnaires', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('study_program_id');
-            $table->string('title');
-            $table->text('description');
-            $table->enum('status', ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']);
-            $table->date('start_date');
-            $table->date('end_date');
+        Schema::create('semesters', function (Blueprint $table) {
+            $table->unsignedBigInteger('study_program_id')->primary();
+            $table->string('smt_active', 3);
+            $table->string('smt_upcoming', 3);
+            $table->string('smt_previous', 3);
             $table->timestamps();
 
             $table->foreign('study_program_id')->references('id')->on('study_programs');
@@ -29,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('questionnaires');
+        Schema::dropIfExists('semesters');
     }
 };

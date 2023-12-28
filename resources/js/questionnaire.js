@@ -89,12 +89,7 @@ $(function() {
       }
     })
       .done(() => {
-        table.ajax.reload()
-        $('#modal-add').modal('hide')
-        $('#input-title').val('')
-        $('#input-description').val('')
-        $('#input-start-date').val('')
-        $('#input-end-date').val('')
+        location.reload()
       })
       .fail((xhr) => {
         console.log(xhr.responseText)

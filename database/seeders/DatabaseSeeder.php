@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Semester;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +20,8 @@ class DatabaseSeeder extends Seeder
             FacultySeeder::class,
             StudyProgramSeeder::class,
             StudentSeeder::class,
-            CategorySeeder::class
+            CategorySeeder::class,
+            SemesterSeeder::class,
         ]);
     }
 }

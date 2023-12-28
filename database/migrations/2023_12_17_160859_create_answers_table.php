@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('submission_id');
             $table->unsignedBigInteger('question_id');
             $table->integer('scale');
+            $table->string('semester', 3);
             $table->timestamps();
 
             $table->unique(['submission_id', 'question_id']);
