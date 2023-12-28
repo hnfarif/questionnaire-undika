@@ -28,14 +28,120 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        $Σxiyi = $this->getXiYi($questions);
+        $rxy = $this->getRxy($questions, $submissions);
+        $r = $this->getR($submissions, $categories, $questions);
+        $this->calculateMean($questions);
 
-        return view('submission.index', compact(
-            'submissions',
-            'questions',
-            'categories',
-            'Σxiyi'
-        ));
+        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
+    }
+
+    private function getRxy($questions, $submissions): array
+    {
+        $listRxy = [];
+        $n = $submissions->count();
+
+        foreach ($questions as $question) {
+            $sumyi = 0;
+            $sumxiyi = 0;
+            $sumxi2 = 0;
+            $sumyi2 = 0;
+
+            $answers = Answer::query()
+                ->with(['question', 'submission'])
+                ->where('question_id', '=', $question->id)
+                ->whereHas('question', function ($subQuery) use ($question) {
+                    $subQuery->where('category_id', $question->category_id);
+                })
+                ->get();
+            $sumxi = $answers->sum('scale');
+
+            foreach ($answers as $answer) {
+                $yi = Answer::query()
+                    ->with(['question', 'submission'])
+                    ->whereHas('question', function ($subQuery) use ($answer) {
+                        $subQuery->where('category_id', $answer->question->category_id);
+                    })
+                    ->whereHas('submission', function ($subQuery) use ($answer) {
+                        $subQuery->where('nim', $answer->submission->nim)
+                            ->where('id', $answer->submission->id);
+                    })
+                    ->sum('scale');
+
+
+                $sumyi += $yi;
+                $sumyi2 += pow($yi, 2);
+                $sumxiyi += $sumyi * $answer->scale;
+                $sumxi2 += pow($answer->scale, 2);
+            }
+
+
+            $powsumxi = pow($sumxi, 2);
+            $powsumyi = pow($sumyi, 2);
+            $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
+            $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
+            $rxy = $numerator / $denominator;
+            $listRxy[$question->id] = $rxy;
+        }
+
+        return $listRxy;
+    }
+
+    private function getR($submissions, $categories, $questions): array
+    {
+        $n = $submissions->count();
+        $listR = [];
+
+        foreach ($categories as $category) {
+            $k = $questions->where('category_id', $category->id)->count();
+            $sumvariants = 0;
+            $sumscale = 0;
+            $sumscale2 = 0;
+
+            foreach ($questions as $question) {
+                $sumxi = 0;
+                $sumxi2 = 0;
+
+                if ($question->category_id === $category->id) {
+                    $answers = Answer::query()->where('question_id', $question->id)->get();
+                    foreach ($answers as $answer) {
+                        $sumxi += $answer->scale;
+                        $sumxi2 += pow($answer->scale, 2);
+
+                        $sumByNim = Answer::query()
+                            ->with(['question', 'submission'])
+                            ->whereHas('question', function ($subQuery) use ($answer) {
+                                $subQuery->where('category_id', $answer->question->category_id);
+                            })
+                            ->whereHas('submission', function ($subQuery) use ($answer) {
+                                $subQuery->where('nim', $answer->submission->nim)
+                                    ->where('id', $answer->submission->id);
+                            })
+                            ->sum('scale');
+
+                        $sumscale += $sumByNim;
+                        $sumscale2 += pow($sumscale, 2);
+                    }
+                }
+
+                $variant = ($sumxi2 - pow($sumxi, 2) / $n) / $n;
+                $sumvariants += $variant;
+            }
+
+            $i13 = ($sumscale2 - (pow($sumscale, 2) / $n)) / $n;
+
+            $listR[$category->id] = ($k / ($k - 1)) * (1 - ($sumvariants / $i13));
+        }
+
+        return $listR;
+    }
+
+    private function calculateMean($questions): void
+    {
+        foreach ($questions as $question) {
+            $query = Answer::where('question_id', $question->id);
+            $means[$question->id] = $question;
+            $question['mean'] = $query->sum('scale') / $query->count();
+        }
     }
 
     private function getXiYi($questions)

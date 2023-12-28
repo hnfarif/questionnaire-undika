@@ -79,7 +79,7 @@ $(function () {
               data-question-id="${question.id}"
               data-category-id="${question.category_id}"
               class="question input-group gap-3 mb-3">
-                <div class="form-control flex-grow-1">${question.description}</div>
+                <div class="form-control flex-grow-1" style="cursor: text">${question.description}</div>
                 <div class="input-group-append my-auto">
                   <button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
                     <i class="fa-solid fa-trash"></i>

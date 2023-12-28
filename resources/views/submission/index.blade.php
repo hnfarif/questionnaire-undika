@@ -1,10 +1,15 @@
 @extends('layouts.layout-dashboard')
 @push('scripts')
+<script>
+  window.categories = @json($categories);
+    window.questions = @json($questions);
+    window.rxy = @json($rxy);
+    window.r = @json($r);
+</script>
 @vite([
 'resources/js/submission.js',
 'resources/sass/submission.scss'
 ])
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
 @endpush
 @section('content')
 <div class="container-fluid px-4">
@@ -22,14 +27,14 @@
         </li>
       </ol>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+    <button id="btn-analytics-descriptive" type="button" class="btn btn-primary">
+      Analisis Deskriptif
+    </button>
+    <button id="btn-validity" type="button" class="btn btn-primary">
       Uji Validitas
     </button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+    <button id="btn-reliability" type="button" class="btn btn-primary">
       Uji Reliabilitas
-    </button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
-      Hitung
     </button>
   </div>
 
@@ -38,149 +43,90 @@
       <i class="fas fa-table me-1"></i>
       Daftar Kuesioner
     </div>
-    <div class="card-body">
-      <select id="select-category" class="ms-3" style="max-width: 120px;">
-        @foreach($categories as $category)
-        <option value="{{ $category->id }}">{{ $category->name }}</option>
-        @endforeach
-      </select>
-      <div class="table-responsive">
-        <table id="table-submission">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama</th>
-              <th>NIM</th>
+    <div class="card-body px-2">
+      <label for="select-category">
+        <select id="select-category" style="max-width: 160px;" class="form-select form-select-sm mb-3">
+          @foreach($categories as $index => $category)
+          <option {{ $index===0 ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
+          @endforeach
+        </select>
+      </label>
+      <div class="container-fluid">
+        <div class="table-responsive">
+          <table id="table-submission" class="table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>NIM</th>
+                @php
+                $questionCounters = [];
+                @endphp
+
+                @foreach($questions as $index=> $question)
+                @if (!isset($questionCounters[$question->category->id]))
+                @php
+                $questionCounters[$question->category->id] = 1;
+                @endphp
+                @endif
+
+                <th data-is-question="true" data-index="{{ $index +3 }}"
+                  data-category-id="{{ $question->category->id }}" data-question-id="{{ $question->id }}"
+                  data-question-category="{{ $question->category->name }}"
+                  data-question-description="{{ $question->description }}">
+                  <button class="btn btn-light btn-question text-nowrap">
+                    X<sub>{{ $question->category->id }}</sub>
+                    <sub>{{ $questionCounters[$question->category->id] }}</sub>
+                  </button>
+                </th>
+
+                @php
+                $questionCounters[$question->category->id]++;
+                $index++;
+                @endphp
+                @endforeach
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
               @php
-              $questionCounters = [];
-              $index = 3;
+              $lengths = [];
               @endphp
-
-              @foreach($questions as $question)
-              @if (!isset($questionCounters[$question->category->id]))
-              @php
-              $questionCounters[$question->category->id] = 1;
-              @endphp
-              @endif
-
-              <th data-is-question="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
-                data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
-                data-question-description="{{ $question->description }}">
-                <button class="btn btn-light btn-question text-nowrap">
-                  X<sub>{{ $question->category->id }}</sub>
-                  <sub>{{ $questionCounters[$question->category->id] }}</sub>
-                </button>
-              </th>
-
-              @if(count(collect($questions)->filter(function($q) use ($question){
-              return $q->category->id === $question->category->id;
-              })) === $questionCounters[$question->category->id])
-              @php
-              $index++
-              @endphp
-              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-total="true"
-                data-category-id="{{ $question->category->id }}">
-                ΣX<sub>i</sub> (Y<sub>i</sub>)
-              </th>
-
-              @endif
-
-              @php
-              $questionCounters[$question->category->id]++;
-              $index++;
-              @endphp
-              @endforeach
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th colspan="3" style="text-align: right">
-                ΣX<sub>i</sub>Y<sub>i</sub>
-              </th>
-              @php
-              $questionCounters = [];
-              $index = 3;
-              @endphp
-
-              @foreach($questions as $question)
-              @if (!isset($questionCounters[$question->category->id]))
-              @php
-              $questionCounters[$question->category->id] = 1;
-              @endphp
-              @endif
-
-              <th data-is-xiyi="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
-                data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
-                data-question-description="{{ $question->description }}">
-                {{ $Σxiyi[$question->category->id."-".$question->id] }}
-              </th>
-
-              @if(count(collect($questions)->filter(function($q) use ($question){
-              return $q->category->id === $question->category->id;
-              })) === $questionCounters[$question->category->id])
-              @php
-              $index++
-              @endphp
-              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-xiyi-total="true"
-                data-category-id="{{ $question->category->id }}">
-
-              </th>
-              @endif
-
-              @php
-              $questionCounters[$question->category->id]++;
-              $index++;
-              @endphp
-              @endforeach
-            </tr>
-            {{-- <tr>
-              <th colspan="3" style="text-align: right">
-                Total ΣX<sub>i</sub>Y<sub>i</sub>
-              </th>
-              @php
-              $questionCounters = [];
-              $index = 3;
-              @endphp
-
-              @foreach($questions as $question)
-              @if (!isset($questionCounters[$question->category->id]))
-              @php
-              $questionCounters[$question->category->id] = 1;
-              @endphp
-              @endif
-
-              <th data-is-xiyi="true" data-index="{{ $index }}" data-category-id="{{ $question->category->id }}"
-                data-question-id="{{ $question->id }}" data-question-category="{{ $question->category->name }}"
-                data-question-description="{{ $question->description }}">
-                {{ $Σxiyi[$question->category->id."-".$question->id] }}
-              </th>
-
-              @if(count(collect($questions)->filter(function($q) use ($question){
-              return $q->category->id === $question->category->id;
-              })) === $questionCounters[$question->category->id])
-              @php
-              $index++
-              @endphp
-              <th class="text-nowrap" data-index="{{ $index }}" data-is-question="true" data-is-xiyi-total="true"
-                data-category-id="{{ $question->category->id }}">
-                ?
-              </th>
-              @endif
-
-              @php
-              $questionCounters[$question->category->id]++;
-              $index++;
-              @endphp
-              @endforeach
-            </tr> --}}
-          </tfoot>
-        </table>
+              <tr>
+                <th colspan="3" style="text-align: right">R<sub>x</sub><sub>y</sub></th>
+                @foreach($questions as $index => $question)
+                <th>{{ number_format($rxy[$question->id], 2) }}</th>
+                @if(!isset($lengths[$question->category_id]))
+                @php
+                $lengths[$question->category_id] = 1;
+                @endphp
+                @else
+                @php
+                $lengths[$question->category_id] += 1;
+                @endphp
+                @endif
+                @endforeach
+              </tr>
+              <tr>
+                <th colspan="3" style="text-align: right">R</th>
+                @foreach($categories as $category)
+                <th @if(!isset($lengths[$category->id])) colspan="0"
+                  @else colspan="{{ $lengths[$category->id] }}" @endif>
+                  {{ number_format($r[$category->id], 2) }}
+                </th>
+                @endforeach
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 @include('submission.components.modal-detail')
+@include('submission.components.modal-analytics-descriptive')
+@include('submission.components.modal-validity')
+@include('submission.components.modal-reliability')
 @endsection
