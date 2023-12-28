@@ -30,6 +30,7 @@ class SubmissionController extends Controller
 
         $rxy = $this->getRxy($questions, $submissions);
         $r = $this->getR($submissions, $categories, $questions);
+        $this->calculateMean($questions);
 
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
@@ -38,8 +39,6 @@ class SubmissionController extends Controller
     {
         $listRxy = [];
         $n = $submissions->count();
-
-        $dns = [];
 
         foreach ($questions as $question) {
             $sumyi = 0;
@@ -81,14 +80,13 @@ class SubmissionController extends Controller
             $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
             $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
             $rxy = $numerator / $denominator;
-            array_push($dns, "$rxy = $numerator / $denominator => $n * $sumxiyi - ($sumxi * $sumyi) / ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi)");
             $listRxy[$question->id] = $rxy;
         }
 
         return $listRxy;
     }
 
-    private function getR($submissions, $categories, $questions)
+    private function getR($submissions, $categories, $questions): array
     {
         $n = $submissions->count();
         $listR = [];
@@ -135,6 +133,15 @@ class SubmissionController extends Controller
         }
 
         return $listR;
+    }
+
+    private function calculateMean($questions): void
+    {
+        foreach ($questions as $question) {
+            $query = Answer::where('question_id', $question->id);
+            $means[$question->id] = $question;
+            $question['mean'] = $query->sum('scale') / $query->count();
+        }
     }
 
     public function store(Request $request): RedirectResponse

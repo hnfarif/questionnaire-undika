@@ -1,5 +1,11 @@
 @extends('layouts.layout-dashboard')
 @push('scripts')
+  <script>
+    window.categories = @json($categories);
+    window.questions = @json($questions);
+    window.rxy = @json($rxy);
+    window.r = @json($r);
+  </script>
   @vite([
   'resources/js/submission.js',
   'resources/sass/submission.scss'
@@ -21,8 +27,23 @@
           </li>
         </ol>
       </div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+      <button
+        id="btn-analytics-descriptive"
+        type="button"
+        class="btn btn-primary">
         Analisis Deskriptif
+      </button>
+      <button
+        id="btn-validity"
+        type="button"
+        class="btn btn-primary">
+        Uji Validitas
+      </button>
+      <button
+        id="btn-reliability"
+        type="button"
+        class="btn btn-primary">
+        Uji Reliabilitas
       </button>
     </div>
 
@@ -84,7 +105,7 @@
                 @endphp
                 <tr>
                   <th colspan="3" style="text-align: right">R<sub>x</sub><sub>y</sub></th>
-                  @foreach($questions as $index=> $question)
+                  @foreach($questions as $index => $question)
                     <th>{{ number_format($rxy[$question->id], 2) }}</th>
                     @if(!isset($lengths[$question->category_id]))
                       @php
@@ -113,5 +134,9 @@
       </div>
     </div>
   </div>
+
   @include('submission.components.modal-detail')
+  @include('submission.components.modal-analytics-descriptive')
+  @include('submission.components.modal-validity')
+  @include('submission.components.modal-reliability')
 @endsection
