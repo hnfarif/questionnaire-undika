@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Questionnaire;
+use App\Models\StudyProgram;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,8 +33,10 @@ class QuestionnaireController extends Controller
             'endDate' => 'date',
         ]);
 
+        $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
+
         $questionnaire = Questionnaire::create([
-            'author_id' => Auth::user()->id,
+            'study_program_id' => $studyProgramId,
             'title' => $data['title'],
             'description' => $data['description'],
             'status' => 'DRAFT',

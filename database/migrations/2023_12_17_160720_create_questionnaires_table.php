@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('questionnaires', function (Blueprint $table) {
             $table->id();
-            $table->string('author_id', 6);
+            $table->unsignedBigInteger('study_program_id');
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']);
@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->date('end_date');
             $table->timestamps();
 
-            $table->foreign('author_id')->references('nik')->on('employees');
+            $table->foreign('study_program_id')->references('id')->on('study_programs');
         });
     }
 
