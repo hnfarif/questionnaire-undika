@@ -1,6 +1,5 @@
 import 'datatables.net-bs5'
-import 'perfect-scrollbar/css/perfect-scrollbar.css'
-import PerfectScrollbar from 'perfect-scrollbar'
+import Chart from 'chart.js/auto'
 
 $(function() {
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -91,4 +90,62 @@ $(function() {
     $('#title-category').text(category)
     $('#modal-detail-question .modal-body').html(description)
   }
+
+  $('#btn-analytics-descriptive').on('click', function() {
+    $('#modal-analytics-descriptive').modal('show')
+  })
+
+  const backgroundColors = categories.reduce((acc, category, index) => ({
+    ...acc, [category.id]: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)'
+    ][index]
+  }), {})
+  const borderColors = categories.reduce((acc, category, index) => ({
+    ...acc, [category.id]: [
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)'
+    ][index]
+  }), {})
+
+  const counter = {}
+  const labels = questions.map((question) => {
+    const number = counter[question.category_id]
+    if (typeof  number === 'undefined') {
+      counter[question.category_id] = 1
+    }else {
+      counter[question.category_id] += 1
+    }
+    return `X${question.category_id} ${counter[question.category_id]}`})
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Mean',
+      data: questions.map((question) => question.mean),
+      backgroundColor: questions.map((question) => backgroundColors[question.category_id]),
+      borderColor: questions.map((question) => borderColors[question.category_id]),
+      borderWidth: 1
+    }]
+  }
+
+  const config = {
+    type: 'bar',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  }
+
+  const ctx = document.getElementById('canvas-analytics-descriptive').getContext('2d')
+  new Chart(ctx, config)
 })

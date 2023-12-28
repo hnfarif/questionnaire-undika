@@ -1,5 +1,9 @@
 @extends('layouts.layout-dashboard')
 @push('scripts')
+  <script>
+    window.categories = @json($categories);
+    window.questions = @json($questions);
+  </script>
   @vite([
   'resources/js/submission.js',
   'resources/sass/submission.scss'
@@ -21,7 +25,10 @@
           </li>
         </ol>
       </div>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+      <button
+        id="btn-analytics-descriptive"
+        type="button"
+        class="btn btn-primary">
         Analisis Deskriptif
       </button>
     </div>
@@ -113,5 +120,7 @@
       </div>
     </div>
   </div>
+
   @include('submission.components.modal-detail')
+  @include('submission.components.modal-analytics-descriptive')
 @endsection

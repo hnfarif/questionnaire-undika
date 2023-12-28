@@ -30,6 +30,7 @@ class SubmissionController extends Controller
 
         $rxy = $this->getRxy($questions, $submissions);
         $r = $this->getR($submissions, $categories, $questions);
+        $this->calculateMean($questions);
 
         return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
     }
@@ -88,7 +89,7 @@ class SubmissionController extends Controller
         return $listRxy;
     }
 
-    private function getR($submissions, $categories, $questions)
+    private function getR($submissions, $categories, $questions): array
     {
         $n = $submissions->count();
         $listR = [];
@@ -135,6 +136,15 @@ class SubmissionController extends Controller
         }
 
         return $listR;
+    }
+
+    private function calculateMean($questions): void
+    {
+        foreach ($questions as $question) {
+            $query = Answer::where('question_id', $question->id);
+            $means[$question->id] = $question;
+            $question['mean'] = $query->sum('scale') / $query->count();
+        }
     }
 
     public function store(Request $request): RedirectResponse
