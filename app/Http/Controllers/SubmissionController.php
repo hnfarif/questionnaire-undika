@@ -40,8 +40,6 @@ class SubmissionController extends Controller
         $listRxy = [];
         $n = $submissions->count();
 
-        $dns = [];
-
         foreach ($questions as $question) {
             $sumyi = 0;
             $sumxiyi = 0;
@@ -82,7 +80,6 @@ class SubmissionController extends Controller
             $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
             $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
             $rxy = $numerator / $denominator;
-            array_push($dns, "$rxy = $numerator / $denominator => $n * $sumxiyi - ($sumxi * $sumyi) / ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi)");
             $listRxy[$question->id] = $rxy;
         }
 
