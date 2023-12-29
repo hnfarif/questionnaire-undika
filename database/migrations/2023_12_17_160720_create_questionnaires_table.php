@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('status', ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']);
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('semester', 3);
             $table->timestamps();
 
             $table->foreign('study_program_id')->references('id')->on('study_programs');
