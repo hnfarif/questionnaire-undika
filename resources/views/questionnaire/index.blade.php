@@ -21,17 +21,25 @@
         </li>
       </ol>
     </div>
-    @if (Auth::user()->roles->first()->name === 'KAPRODI' && $questionnaireCount < 1) <button type="button"
-      class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+    @if (Auth::user()->roles->first()->name === 'KAPRODI') <button type="button" class="btn btn-primary"
+      data-bs-toggle="modal" data-bs-target="#modal-add">
       <i class="fa-solid fa-plus"></i> Tambah Kuesioner
-      </button>
-      @endif
+    </button>
+    @endif
   </div>
 
   <div class="card mb-4">
-    <div class="card-header">
-      <i class="fas fa-table me-1"></i>
-      Daftar Kuesioner
+    <div class="card-header d-flex">
+      <span><i class="fas fa-table me-1"></i>
+        Daftar Kuesioner
+      </span>
+      <div class="ms-auto d-flex">
+        <label class="me-3 align-self-center">Semester:</label>
+        <select class="form-select" name="semester" id="select-semester">
+          <option value="{{$semester->smt_active}}" selected>{{$semester->smt_active}} (Aktif)</option>
+          <option value="{{$semester->smt_previous}}">{{$semester->smt_previous}}</option>
+        </select>
+      </div>
     </div>
     <div class="card-body">
       <div class="container-fluid">
@@ -43,6 +51,7 @@
                 <th>Judul</th>
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Selesai</th>
+                <th>Semester</th>
                 <th>Status</th>
                 <th>Aksi</th>
               </tr>
