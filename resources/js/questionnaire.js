@@ -1,6 +1,7 @@
 import 'datatables.net-bs5'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
+import Swal from 'sweetalert2'
 
 $(function () {
   const table = $('#table-questionnaire').DataTable({
@@ -29,6 +30,10 @@ $(function () {
       },
       {
         data: null,
+        render: 'semester',
+      },
+      {
+        data: null,
         render: 'status',
       },
       {
@@ -36,11 +41,16 @@ $(function () {
         render: (questionnaire) => {
           return `
           <div>
-            <button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${
-              questionnaire.id
-            }">
-              <i class="fa-regular fa-pen-to-square"></i>
-            </button>
+            ${
+              questionnaire.semester === questionnaire.study_program.semester.smt_active
+                ? `<button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>`
+                : `<button class="btn btn-info btn-duplicate" title="Duplikat Kuesioner" data-id="${questionnaire.id}">
+                <i class="fa-regular fa-clone"></i>
+              </button>`
+            }
+
             <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
             ${
               questionnaire.status === 'APPROVED'
@@ -71,6 +81,7 @@ $(function () {
 
   $('#btn-add').on('click', handleAddQuestionnaire)
   $('#btn-update').on('click', handleUpdateQuestionnaire)
+  $('#select-semester').on('change', handleSelectSemester)
   table.on('click', '.btn-edit', handleEditQuestionnaire)
 
   function handleAddQuestionnaire() {
@@ -128,9 +139,27 @@ $(function () {
       headers: {
         'Content-Type': 'application/json',
       },
+      beforeSend: function () {
+        Swal.fire({
+          title: 'Loading...',
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading()
+          },
+        })
+      },
       success: function () {
         $('#modal-update').modal('hide')
         table.ajax.reload()
+        Swal.close()
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Data berhasil di ubah!',
+          showConfirmButton: false,
+          timer: 1500,
+        })
         $('#input-edit-title').val('')
         $('#input-edit-description').val('')
         $('#input-edit-start-date').val('')
@@ -140,5 +169,15 @@ $(function () {
         console.log(xhr.responseText)
       },
     })
+  }
+
+  function handleSelectSemester() {
+    $.get(`/api/questionnaire?semester=${$(this).val()}`)
+      .done((questionnaires) => {
+        table.clear().rows.add(questionnaires).draw()
+      })
+      .fail((xhr) => {
+        console.log(xhr.responseText)
+      })
   }
 })
