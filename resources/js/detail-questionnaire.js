@@ -71,7 +71,6 @@ $(function () {
 
   function renderQuestions() {
     const role = $('#body-section').data('role')
-    console.log(role)
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
       .done(function (questions) {
         $('.question-item').empty()

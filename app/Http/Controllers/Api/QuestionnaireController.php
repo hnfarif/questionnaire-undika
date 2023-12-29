@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Questionnaire;
+use App\Models\Semester;
 use App\Models\StudyProgram;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,9 +16,17 @@ class QuestionnaireController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $questionnaires = Questionnaire::all();
+        $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
+        $semester = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
+
+        if ($request->has("semester")) {
+            $semester = $request->get("semester");
+        }
+
+        $questionnaires = Questionnaire::with('studyProgram')->semester($semester)->get();
+
         return response()->json($questionnaires);
     }
 
@@ -34,6 +43,7 @@ class QuestionnaireController extends Controller
         ]);
 
         $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
+        $semesterActive = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
 
         $questionnaire = Questionnaire::create([
             'study_program_id' => $studyProgramId,
@@ -41,7 +51,8 @@ class QuestionnaireController extends Controller
             'description' => $data['description'],
             'status' => 'DRAFT',
             'start_date' => $data['startDate'],
-            'end_date' => $data['endDate']
+            'end_date' => $data['endDate'],
+            'semester' => $semesterActive
         ]);
 
         return response()->json($questionnaire);
