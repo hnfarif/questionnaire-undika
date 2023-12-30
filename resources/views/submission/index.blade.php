@@ -16,14 +16,14 @@
     <div class="d-flex align-items-center gap-3">
       <div class="flex-grow-1">
         <h1 class="mt-4">
-          Kuesioner
+          {{ $questionnaire->title }}
         </h1>
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item">
             <a href="{{ route('dashboard') }}">Dashboard</a>
           </li>
           <li class="breadcrumb-item active">
-            Kuesioner
+            Submission
           </li>
         </ol>
       </div>

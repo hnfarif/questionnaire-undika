@@ -22,10 +22,11 @@ class SubmissionController extends Controller
         }
 
         $questionnaireId = $request->questionnaireId;
-        $submissions = Submission::where('questionnaire_id', '=', $questionnaireId)
+        $questionnaire = Questionnaire::findOrFail($questionnaireId);
+        $submissions = Submission::where('questionnaire_id', $questionnaireId)
             ->with(['student', 'answers.question.category'])
             ->get();
-        $questions = Question::where('questionnaire_id', '=', $questionnaireId)->get();
+        $questions = Question::where('questionnaire_id', $questionnaireId)->get();
 
         $categories = Category::orderBy('id', 'asc')->get();
 
@@ -33,7 +34,7 @@ class SubmissionController extends Controller
         $r = $this->getR($submissions, $categories, $questions);
         $this->calculateMean($questions);
 
-        return view('submission.index', compact('submissions', 'questions', 'categories', 'rxy', 'r'));
+        return view('submission.index', compact('questionnaire','submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
     private function getRxy($questions, $submissions): array
