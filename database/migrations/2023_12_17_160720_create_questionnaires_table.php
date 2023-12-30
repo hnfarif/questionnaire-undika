@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']);
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->string('semester', 3);
             $table->timestamps();
 
