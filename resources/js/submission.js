@@ -1,7 +1,7 @@
 import 'datatables.net-bs5'
 import Chart from 'chart.js/auto'
 
-$(function () {
+$(function() {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const questionnaireId = urlSearchParams.get('questionnaireId')
 
@@ -10,17 +10,17 @@ $(function () {
       data: null,
       render: (data, row, type, meta) => {
         return meta.row + 1
-      },
+      }
     },
     {
-      data: 'student.name',
+      data: 'student.name'
     },
     {
-      data: 'student.nim',
-    },
+      data: 'student.nim'
+    }
   ]
 
-  $('thead th[data-is-question="true"]').each(function () {
+  $('thead th[data-is-question="true"]').each(function() {
     const questionId = parseInt($(this).data('question-id'))
     columns = [
       ...columns,
@@ -31,8 +31,8 @@ $(function () {
           if (!answer) return `<span class="d-block w-100" style="cursor: pointer">0</span>`
 
           return `<span class="d-block w-100" style="cursor: pointer">${answer.scale}</span>`
-        },
-      },
+        }
+      }
     ]
   })
 
@@ -40,18 +40,18 @@ $(function () {
     ajax: {
       method: 'GET',
       url: `/api/submission?questionnaireId=${questionnaireId}`,
-      dataSrc: '',
+      dataSrc: ''
     },
     columns: columns,
     initComplete: () => {
       $('#select-category').appendTo('#table-submission_length')
-    },
+    }
   })
 
   $('#select-category').on('change', handleChangeCategory).trigger('change')
 
   function handleChangeCategory(event) {
-    table.columns().every(function () {
+    table.columns().every(function() {
       this.visible(true)
     })
 
@@ -62,17 +62,17 @@ $(function () {
         2,
         ...[
           ...$('th[data-category-id]')
-            .filter(function () {
+            .filter(function() {
               return parseInt($(this).data('category-id')) === parseInt(event.target.value)
             })
-            .map(function () {
+            .map(function() {
               return parseInt($(this).data('index'))
-            }),
-        ],
-      ]),
+            })
+        ]
+      ])
     ]
 
-    table.columns().every(function () {
+    table.columns().every(function() {
       this.visible(indexes.includes(this.index()))
     })
 
@@ -89,21 +89,24 @@ $(function () {
     $('#modal-detail-question .modal-body').html(description)
   }
 
-  $('#btn-analytics-descriptive').on('click', function () {
+  $('#btn-analytics-descriptive').on('click', function() {
     $('#modal-analytics-descriptive').modal('show')
   })
 
-  $('#btn-validity').on('click', function () {
+  $('#btn-validity').on('click', function() {
     $('#modal-validity').modal('show')
   })
 
-  $('#btn-reliability').on('click', function () {
+  $('#btn-reliability').on('click', function() {
     $('#modal-reliability').modal('show')
   })
 
   analyticsDescriptiveChart()
   validityChart()
   reliabilityChart()
+
+  // Tooltip
+  $('[data-bs-toggle="tooltip"]').tooltip()
 })
 
 const backgroundColors = categories.reduce(
@@ -114,8 +117,8 @@ const backgroundColors = categories.reduce(
       'rgba(255, 159, 64, 0.2)',
       'rgba(75, 192, 192, 0.2)',
       'rgba(54, 162, 235, 0.2)',
-      'rgba(153, 102, 255, 0.2)',
-    ][index],
+      'rgba(153, 102, 255, 0.2)'
+    ][index]
   }),
   {}
 )
@@ -128,8 +131,8 @@ const borderColors = categories.reduce(
       'rgb(255, 159, 64)',
       'rgb(75, 192, 192)',
       'rgb(54, 162, 235)',
-      'rgb(153, 102, 255)',
-    ][index],
+      'rgb(153, 102, 255)'
+    ][index]
   }),
   {}
 )
@@ -144,7 +147,7 @@ const subscriptMap = {
   6: '₆',
   7: '₇',
   8: '₈',
-  9: '₉',
+  9: '₉'
 }
 
 function analyticsDescriptiveChart() {
@@ -169,9 +172,9 @@ function analyticsDescriptiveChart() {
         data: questions.map((question) => question.mean),
         backgroundColor: questions.map((question) => backgroundColors[question.category_id]),
         borderColor: questions.map((question) => borderColors[question.category_id]),
-        borderWidth: 1,
-      },
-    ],
+        borderWidth: 1
+      }
+    ]
   }
 
   const config = {
@@ -184,20 +187,20 @@ function analyticsDescriptiveChart() {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
+              size: 16
+            }
+          }
         },
         x: {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
-        },
-      },
-    },
+              size: 16
+            }
+          }
+        }
+      }
+    }
   }
 
   new Chart($('#canvas-analytics-descriptive')[0].getContext('2d'), config)
@@ -225,9 +228,9 @@ function validityChart() {
         data: questions.map((question) => rxy[question.id]),
         backgroundColor: questions.map((question) => backgroundColors[question.category_id]),
         borderColor: questions.map((question) => borderColors[question.category_id]),
-        borderWidth: 1,
-      },
-    ],
+        borderWidth: 1
+      }
+    ]
   }
 
   const config = {
@@ -240,20 +243,20 @@ function validityChart() {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
+              size: 16
+            }
+          }
         },
         x: {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
-        },
-      },
-    },
+              size: 16
+            }
+          }
+        }
+      }
+    }
   }
 
   new Chart($('#canvas-validity')[0].getContext('2d'), config)
@@ -269,9 +272,9 @@ function reliabilityChart() {
         data: Object.values(r),
         backgroundColor: Object.keys(r).map((categoryId) => backgroundColors[categoryId]),
         borderColor: Object.keys(r).map((categoryId) => borderColors[categoryId]),
-        borderWidth: 1,
-      },
-    ],
+        borderWidth: 1
+      }
+    ]
   }
 
   const config = {
@@ -284,20 +287,20 @@ function reliabilityChart() {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
+              size: 16
+            }
+          }
         },
         x: {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16,
-            },
-          },
-        },
-      },
-    },
+              size: 16
+            }
+          }
+        }
+      }
+    }
   }
 
   new Chart($('#canvas-reliability')[0].getContext('2d'), config)
