@@ -16,8 +16,14 @@
 
 <body>
   <section class="container mt-3" style="max-width: 720px">
-    <div class="card">
+    <div class="card mt-3">
       <div class="card-body">
+        <div>
+          <h3> {{ $questionnaire->title }}</h3>
+        </div>
+        <div>
+          <p>{{ $questionnaire->description }}</p>
+        </div>
         <div>
           {{ Auth::user()->student->name }}
         </div>
@@ -27,6 +33,7 @@
       </div>
     </div>
   </section>
+  @if (!$isAnswered)
   <form class="container-sm p-3" style="max-width: 720px" method="POST"
     action="{{ route('submission.store', ['questionnaireId' => $questionnaire->id]) }}">
     @csrf
@@ -76,6 +83,17 @@
     @endforeach
     <button type="submit" class="btn btn-primary btn-submit w-100">Submit</button>
   </form>
+  @else
+  <section class="container mt-3" style="max-width: 720px">
+    <div class="card mt-3">
+      <div class="card-body">
+        <div>
+          <h3> Anda Telah Mengisi Kuesioner!</h3>
+          <a href="{{ route('questionnaire.index') }}">Kembali ke daftar kuesioner</a>
+        </div>
+      </div>
+    </div>
+    @endif
 </body>
 
 </html>

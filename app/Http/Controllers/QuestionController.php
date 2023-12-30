@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Questionnaire;
+use App\Models\Submission;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class QuestionController extends Controller
@@ -23,8 +25,11 @@ class QuestionController extends Controller
             abort(404);
         }
 
-
         $questionnaireId = $request->questionnaireId;
+
+        $nim = Auth::user()->student->nim;
+        $isAnswered = Submission::whereQuestionnaireId($questionnaireId)->whereNim($nim)->first();
+
         $questionnaire = Questionnaire::findOrFail($questionnaireId);
 
         $startDate = Carbon::create($questionnaire->start_date);
@@ -37,6 +42,6 @@ class QuestionController extends Controller
             abort(404);
         }
 
-        return view('questionnaire.question', compact('questionnaire', 'questions'));
+        return view('questionnaire.question', compact('questionnaire', 'questions', 'isAnswered'));
     }
 }
