@@ -83,6 +83,7 @@ $(function () {
   $('#btn-update').on('click', handleUpdateQuestionnaire)
   $('#select-semester').on('change', handleSelectSemester)
   table.on('click', '.btn-edit', handleEditQuestionnaire)
+  table.on('click', '.btn-duplicate', handleDuplicateQuestionnaire)
 
   function handleAddQuestionnaire() {
     const title = $('#input-title').val()
@@ -179,5 +180,48 @@ $(function () {
       .fail((xhr) => {
         console.log(xhr.responseText)
       })
+  }
+
+  function handleDuplicateQuestionnaire() {
+    Swal.fire({
+      title: 'Apakah anda yakin?',
+      html:
+        'Duplikat kuesioner akan membuat kuesioner yang sama beserta pertanyaannya di semester yang sedang aktif! <br><br>' +
+        'Note : Jangan lupa untuk memasukkan periodenya, setelah kuesioner berhasil diduplikasi!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Duplikat',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `api/questionnaire/duplicate/${$(this).data('id')}`,
+          method: 'POST',
+          beforeSend: function () {
+            Swal.fire({
+              title: 'Loading...',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                Swal.showLoading()
+              },
+            })
+          },
+          success: function (data) {
+            Swal.fire({
+              title: 'Berhasil!',
+              text: 'Kuesioner anda berhasil diduplikasi!. Cek kuesioner di semester yang sedang aktif!',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            })
+          },
+          error: function (xhr) {
+            console.log(xhr.responseText)
+          },
+        })
+      }
+    })
   }
 })

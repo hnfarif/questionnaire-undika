@@ -18,10 +18,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth')->group(function () {
+
+    Route::post('questionnaire/duplicate/{id}', [QuestionnaireController::class, 'duplicateQuestionnaire']);
+
     Route::apiResource('questionnaire', QuestionnaireController::class);
     Route::apiResource('question', QuestionController::class);
     Route::apiResource('submission', SubmissionController::class);
     Route::apiResource('answer', AnswerController::class);
+
 });
 
 Route::apiResource('answer', AnswerController::class);

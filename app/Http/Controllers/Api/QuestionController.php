@@ -18,7 +18,7 @@ class QuestionController extends Controller
     public function index(Request $request): JsonResponse
     {
         if ($request->has('questionnaireId')) {
-            $questions = Question::where('questionnaire_id', '=', $request->questionnaireId)->get();
+            $questions = Question::with('questionnaire')->where('questionnaire_id', '=', $request->questionnaireId)->get();
             return response()->json($questions);
         }
 

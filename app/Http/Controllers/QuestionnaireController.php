@@ -22,8 +22,10 @@ class QuestionnaireController extends Controller
      */
     public function index(): View
     {
-        $studyProgramId = StudyProgram::whereMngrId(auth()->user()->id)->first()->id;
+        $studyProgramId = StudyProgram::whereMngrId(auth()->user()->id)->first()->id ??
+            StudyProgram::first()->id;
         $semester = Semester::whereStudyProgramId($studyProgramId)->first();
+
         return view("questionnaire.index", compact("semester"));
     }
 
