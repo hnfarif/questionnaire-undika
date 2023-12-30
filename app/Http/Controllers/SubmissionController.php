@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Submission;
+use DivisionByZeroError;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,8 +80,13 @@ class SubmissionController extends Controller
             $powsumyi = pow($sumyi, 2);
             $numerator = $n * $sumxiyi - ($sumxi * $sumyi);
             $denominator = ($n * $sumxi2 - $powsumxi) * ($n * $sumyi2 - $powsumyi);
-            $rxy = $numerator / $denominator;
-            $listRxy[$question->id] = $rxy;
+
+            try {
+                $rxy = $numerator / $denominator;
+                $listRxy[$question->id] = $rxy;
+            } catch (DivisionByZeroError) {
+                $listRxy[$question->id] = 0;
+            }
         }
 
         return $listRxy;
@@ -123,13 +129,21 @@ class SubmissionController extends Controller
                     }
                 }
 
-                $variant = ($sumxi2 - pow($sumxi, 2) / $n) / $n;
+                try {
+                    $variant = ($sumxi2 - pow($sumxi, 2) / $n) / $n;
+                } catch (DivisionByZeroError) {
+                    $variant = 0;
+                }
+
                 $sumvariants += $variant;
             }
 
-            $i13 = ($sumscale2 - (pow($sumscale, 2) / $n)) / $n;
-
-            $listR[$category->id] = ($k / ($k - 1)) * (1 - ($sumvariants / $i13));
+            try {
+                $i13 = ($sumscale2 - (pow($sumscale, 2) / $n)) / $n;
+                $listR[$category->id] = ($k / ($k - 1)) * (1 - ($sumvariants / $i13));
+            } catch (DivisionByZeroError) {
+                $listR[$category->id] = 0;
+            }
         }
 
         return $listR;
@@ -144,42 +158,6 @@ class SubmissionController extends Controller
         }
     }
 
-    private function getXiYi($questions)
-    {
-        $Σxiyi = [];
-
-        foreach ($questions as $question) {
-
-
-            $answers = Answer::query()
-                ->with(['question', 'submission'])
-                ->where('question_id', '=', $question->id)
-                ->whereHas('question', function ($subQuery) use ($question) {
-                    $subQuery->where('category_id', $question->category_id);
-                })
-                ->get();
-
-            foreach ($answers as $answer) {
-                $Σx = Answer::query()
-                    ->with(['question', 'submission'])
-                    ->whereHas('submission', function ($subQuery) use ($answer) {
-                        $subQuery->where('nim', $answer->submission->nim);
-                    })
-                    ->whereHas('question', function ($subQuery) use ($answer) {
-                        $subQuery->where('category_id', $answer->question->category_id);
-                    })
-                    ->sum('scale');
-                if (!isset($Σxiyi["$question->category_id-$question->id"])) {
-                    $Σxiyi["$question->category_id-$question->id"] = 0;
-                }
-
-                $Σxiyi["$question->category_id-$question->id"] = $Σxiyi["$question->category_id-$question->id"] + $answer->scale * $Σx;
-            }
-            // $xiyi["$question->category_id-$question->question_id"] = 1;
-        }
-
-        return $Σxiyi;
-    }
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
