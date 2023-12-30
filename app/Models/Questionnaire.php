@@ -27,6 +27,11 @@ class Questionnaire extends Model
         return $this->belongsTo(StudyProgram::class, 'study_program_id', 'id');
     }
 
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
+
     public function scopeSemester(Builder $query, string $semester): void
     {
         $query->whereSemester($semester);
