@@ -65,6 +65,9 @@
           <span class="badge bg-info">DRAFT</span>
         </div>
         @endif
+        @if($questionnaire->status == 'APPROVED')
+        <span class="badge bg-success my-auto">APPROVED</span>
+        @endif
       </div>
     </div>
     <div class="card-body">
@@ -82,7 +85,7 @@
             <div class="accordion-body">
               <div class="question-item form-group question-group mb-3">
               </div>
-              @if(Auth::user()->roles->first()->name === "KAPRODI")
+              @if(Auth::user()->roles->first()->name === "KAPRODI" && $questionnaire->status != 'APPROVED')
               <button data-category-id="{{ $category->id }}" data-category-name="{{ $category->name }}" type="button"
                 class="btn btn-primary btn-sm btn-add">
                 <i class="fa-solid fa-plus"></i> Tambah Pertanyaan

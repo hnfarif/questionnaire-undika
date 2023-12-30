@@ -71,23 +71,25 @@ $(function () {
 
   function renderQuestions() {
     const role = $('#body-section').data('role')
-    console.log(role)
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
       .done(function (questions) {
         $('.question-item').empty()
+        console.log(questions)
         questions.forEach((question) => {
           $(`#accordion-${question.category_id} .question-item`).append(`
             <div
               id="question-${question.id}"
               data-question-id="${question.id}"
               data-category-id="${question.category_id}"
-              class="${role === 'KAPRODI' ? 'question' : ''} input-group gap-3 mb-3">
+              class="${
+                role === 'KAPRODI' && question.questionnaire.status !== 'APPROVED' ? 'question' : ''
+              } input-group gap-3 mb-3">
                 <div class="form-control flex-grow-1" style="cursor: text">${
                   question.description
                 }</div>
                 <div class="input-group-append my-auto">
                   ${
-                    role === 'KAPRODI'
+                    role === 'KAPRODI' && question.questionnaire.status !== 'APPROVED'
                       ? `<button data-question-id="${question.id}" type="button" class="btn btn-danger btn-delete">
                   <i class="fa-solid fa-trash"></i>
                 </button>`

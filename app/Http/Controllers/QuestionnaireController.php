@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
+use App\Models\Semester;
 use App\Models\StudyProgram;
 use DateTime;
 use Exception;
@@ -21,12 +22,11 @@ class QuestionnaireController extends Controller
      */
     public function index(): View
     {
-        if (Auth::user()->roles->first()->name === "KAPRODI") {
-            $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
-            $questionnaireCount = Questionnaire::whereStudyProgramId($studyProgramId)->count();
-            return view("questionnaire.index", compact("questionnaireCount"));
-        }
-        return view("questionnaire.index");
+        $studyProgramId = StudyProgram::whereMngrId(auth()->user()->id)->first()->id ??
+            StudyProgram::first()->id;
+        $semester = Semester::whereStudyProgramId($studyProgramId)->first();
+
+        return view("questionnaire.index", compact("semester"));
     }
 
     /**

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Question;
 use App\Models\Questionnaire;
+use App\Models\Semester;
 use App\Models\StudyProgram;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,9 +17,17 @@ class QuestionnaireController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $questionnaires = Questionnaire::all();
+        $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id ?? StudyProgram::first()->id;
+        $semester = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
+
+        if ($request->has("semester")) {
+            $semester = $request->get("semester");
+        }
+
+        $questionnaires = Questionnaire::with('studyProgram')->semester($semester)->get();
+
         return response()->json($questionnaires);
     }
 
@@ -34,6 +44,7 @@ class QuestionnaireController extends Controller
         ]);
 
         $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
+        $semesterActive = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
 
         $questionnaire = Questionnaire::create([
             'study_program_id' => $studyProgramId,
@@ -41,7 +52,8 @@ class QuestionnaireController extends Controller
             'description' => $data['description'],
             'status' => 'DRAFT',
             'start_date' => $data['startDate'],
-            'end_date' => $data['endDate']
+            'end_date' => $data['endDate'],
+            'semester' => $semesterActive
         ]);
 
         return response()->json($questionnaire);
@@ -86,5 +98,30 @@ class QuestionnaireController extends Controller
         $questionnaire = Questionnaire::findOrFail($id);
         $questionnaire->delete();
         return response()->json($questionnaire);
+    }
+
+    public function duplicateQuestionnaire($id)
+    {
+        $findQuestionnaire = Questionnaire::with('questions')->findOrFail($id);
+        $semester = Semester::whereStudyProgramId($findQuestionnaire->study_program_id)->first();
+        $duplicateQuestionnaire = Questionnaire::create(
+            [
+                'study_program_id' => $findQuestionnaire->study_program_id,
+                'title' => $findQuestionnaire->title,
+                'description' => $findQuestionnaire->description,
+                'status' => 'DRAFT',
+                'semester' => $semester->smt_active
+            ]
+        );
+
+        foreach ($findQuestionnaire->questions as $question) {
+            Question::create([
+                'questionnaire_id' => $duplicateQuestionnaire->id,
+                'category_id' => $question->category_id,
+                'description' => $question->description,
+            ]);
+        }
+
+        return response()->json($duplicateQuestionnaire);
     }
 }
