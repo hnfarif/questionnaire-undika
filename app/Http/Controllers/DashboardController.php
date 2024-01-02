@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Questionnaire;
+use App\Models\Student;
+use App\Models\Submission;
 use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
@@ -11,6 +15,10 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        return view('dashboard.index');
+        $numberOfSubmissions = Submission::count();
+        $numberOfStudents = Student::count();
+        $questionnaires = Questionnaire::query()->whereHas('submissions')->get();
+        $categories = Category::all();
+        return view('dashboard.index', compact('numberOfSubmissions', 'numberOfStudents', 'questionnaires', 'categories'));
     }
 }

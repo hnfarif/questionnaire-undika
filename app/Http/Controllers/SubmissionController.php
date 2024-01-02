@@ -30,14 +30,14 @@ class SubmissionController extends Controller
 
         $categories = Category::orderBy('id', 'asc')->get();
 
-        $rxy = $this->getRxy($questions, $submissions);
-        $r = $this->getR($submissions, $categories, $questions);
+        $rxy = self::getRxy($questions, $submissions);
+        $r = self::getR($submissions, $categories, $questions);
         $this->calculateMean($questions);
 
-        return view('submission.index', compact('questionnaire','submissions', 'questions', 'categories', 'rxy', 'r'));
+        return view('submission.index', compact('questionnaire', 'submissions', 'questions', 'categories', 'rxy', 'r'));
     }
 
-    private function getRxy($questions, $submissions): array
+    public static function getRxy($questions, $submissions): array
     {
         $listRxy = [];
         $n = $submissions->count();
@@ -93,7 +93,7 @@ class SubmissionController extends Controller
         return $listRxy;
     }
 
-    private function getR($submissions, $categories, $questions): array
+    public static function getR($submissions, $categories, $questions): array
     {
         $n = $submissions->count();
         $listR = [];
@@ -155,7 +155,11 @@ class SubmissionController extends Controller
         foreach ($questions as $question) {
             $query = Answer::where('question_id', $question->id);
             $means[$question->id] = $question;
-            $question['mean'] = $query->sum('scale') / $query->count();
+            try {
+                $question['mean'] = $query->sum('scale') / $query->count();
+            } catch (DivisionByZeroError) {
+                $question['mean'] = 0;
+            }
         }
     }
 

@@ -91,7 +91,7 @@
               </tbody>
               <tfoot>
                 @php
-                  $lengths = [];
+                  $shouldRVisible = [];
                 @endphp
                 <tr>
                   <th colspan="3" style="text-align: right">R<sub>x</sub><sub>y</sub></th>
@@ -104,29 +104,24 @@
                         {{ number_format($rxy[$question->id], 2) }}
                       </span>
                     </th>
-                    @if(!isset($lengths[$question->category_id]))
-                      @php
-                        $lengths[$question->category_id] = 1;
-                      @endphp
-                    @else
-                      @php
-                        $lengths[$question->category_id] += 1;
-                      @endphp
-                    @endif
                   @endforeach
                 </tr>
                 <tr>
                   <th colspan="3" style="text-align: right">R</th>
-                  @foreach($categories as $category)
-                    <th @if(!isset($lengths[$category->id])) colspan="0"
-                        @else colspan="{{ $lengths[$category->id] }}" @endif>
-                      <span
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="bottom"
-                        title="{{ $r[$category->id] > 0.70 ? 'Reliable' : 'Tidak Reliable'}}">
-                          {{ number_format($r[$category->id], 2) }}
+                  @foreach($questions as $question)
+                    <th>
+                      @if(!isset($shouldRVisible[$question->category_id]))
+                        <span
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="{{ $r[$question->category_id] > 0.70 ? 'Reliable' : 'Tidak Reliable'}}">
+                          {{ number_format($r[$question->category_id], 2) }}
                       </span>
+                      @endif
                     </th>
+                    @php
+                      $shouldRVisible[$question->category_id] = true;
+                    @endphp
                   @endforeach
                 </tr>
               </tfoot>
