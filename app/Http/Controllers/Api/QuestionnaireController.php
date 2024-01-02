@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Semester;
 use App\Models\StudyProgram;
+use App\Models\Submission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,6 +67,16 @@ class QuestionnaireController extends Controller
     public function show(string $id): JsonResponse
     {
         $questionnaire = Questionnaire::findOrFail($id);
+
+        $submissions = Submission::where('questionnaire_id', $questionnaire->id)
+            ->with(['student', 'answers.question.category'])
+            ->get();
+        $questions = Question::where('questionnaire_id', $questionnaire->id)->get();
+        $categories = Category::orderBy('id', 'asc')->get();
+
+        $r = \App\Http\Controllers\SubmissionController::getR($submissions, $categories, $questions);
+        $questionnaire['r'] = $r;
+
         return response()->json($questionnaire);
     }
 
@@ -100,7 +112,7 @@ class QuestionnaireController extends Controller
         return response()->json($questionnaire);
     }
 
-    public function duplicateQuestionnaire($id)
+    public function duplicateQuestionnaire($id): JsonResponse
     {
         $findQuestionnaire = Questionnaire::with('questions')->findOrFail($id);
         $semester = Semester::whereStudyProgramId($findQuestionnaire->study_program_id)->first();
