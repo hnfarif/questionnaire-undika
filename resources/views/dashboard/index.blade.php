@@ -2,6 +2,7 @@
 @push('scripts')
   <script>
     window.categories = @json($categories);
+    window.questionnaires = @json($questionnaires);
   </script>
   @vite([
     'resources/js/dashboard.js'

@@ -39,6 +39,10 @@ $(function() {
 
     $(this).val('')
   })
+
+  questionnaires.slice(0, 2).forEach((questionnaire) => {
+    setTimeout(() => $('#select-questionnaires').val(questionnaire.id).trigger('change'), 200)
+  })
 })
 
 function drawRChart(questionnaires) {
