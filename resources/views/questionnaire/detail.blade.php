@@ -85,7 +85,7 @@
                 <div class="accordion-body">
                   <div class="question-item form-group question-group mb-3">
                   </div>
-                  @if(Auth::user()->roles->first()->name === "KAPRODI" && $questionnaire->status != 'APPROVED')
+                  @if(Auth::user()->roles->first()->name === "KAPRODI" && $questionnaire->status == 'DRAFT')
                     <button
                       data-category-id="{{ $category->id }}"
                       data-category-name="{{ $category->name }}"
