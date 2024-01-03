@@ -21,7 +21,7 @@
           </li>
         </ol>
       </div>
-      <button class="btn btn-primary">Tambah Mahasiswa</button>
+      <button id="btn-add" class="btn btn-primary">Tambah Mahasiswa</button>
     </div>
 
     <div class="card mb-4">
@@ -51,4 +51,6 @@
       </div>
     </div>
   </div>
+
+  @include('student.components.modal-add-student')
 @endsection
