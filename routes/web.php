@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,8 @@ Route::middleware('auth')->controller(QuestionController::class)->group(function
 Route::middleware('auth')->controller(SubmissionController::class)->group(function () {
     Route::get('/submission', 'index')->name('submission.index');
     Route::post('/submission', 'store')->name('submission.store');
+});
+
+Route::middleware('auth')->controller(StudentController::class)->group(function () {
+    Route::get('/student', 'index')->name('student.index');
 });
