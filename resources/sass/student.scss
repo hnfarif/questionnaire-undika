@@ -1,0 +1,62 @@
+#table-student {
+    th,
+    tr,
+    td {
+        background-color: white;
+        transition: all 0.5s;
+        max-width: 120px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        &[data-is-question='true'] {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}
+
+table {
+    max-width: 100%;
+}
+
+.table-responsive {
+    overflow-x: inherit;
+}
+
+#select-category {
+    margin-left: 8px;
+}
+
+#table-student_wrapper {
+    .dataTables_length {
+        display: flex;
+        gap: 16px;
+    }
+    .row:not(.dt-row) {
+        display: flex;
+        justify-content: space-between;
+
+        & > *:first-child {
+            display: flex;
+            justify-content: start;
+        }
+
+        & > *:last-child {
+            display: flex;
+            justify-content: end;
+        }
+    }
+}
+
+.table-responsive {
+    select {
+        min-width: 80px;
+    }
+
+    label {
+        display: flex;
+        margin-bottom: 16px;
+        align-items: center;
+        gap: 8px;
+    }
+}
