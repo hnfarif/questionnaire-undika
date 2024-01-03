@@ -10,6 +10,14 @@ class Student extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'nim';
+
+    protected $fillable = [
+        'nim',
+        'study_program_id',
+        'name'
+    ];
+
     public function studyProgram(): BelongsTo
     {
         return $this->belongsTo(StudyProgram::class, 'study_program_id', 'id');

@@ -14,7 +14,7 @@
         <div class="sb-nav-link-icon">
           <i class="fas fa-columns"></i>
         </div>
-        Kuesioner
+        Data Master
         <div class="sb-sidenav-collapse-arrow">
           <i class="fas fa-angle-down"></i>
         </div>
