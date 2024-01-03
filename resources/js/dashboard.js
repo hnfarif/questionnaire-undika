@@ -1,4 +1,7 @@
 import Chart from 'chart.js/auto'
+import select2 from 'select2'
+import 'select2/dist/css/select2.css'
+import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.css'
 
 const backgroundColors = [
   'rgba(255, 99, 132, 0.2)',
@@ -17,28 +20,31 @@ const borderColors = [
 ]
 
 $(function() {
+  select2($)
+
   let selectedQuestionnaires = []
-  $('#select-questionnaires').on('change', function(event) {
-    const questionnaireId = event.target.value
+  $('#select-questionnaires')
+    .select2({
+      theme: 'bootstrap-5'
+    })
+    .on('change', function(event) {
+      const questionnaireId = parseInt(event.target.value)
+      if (!questionnaireId) return
 
-    if (!questionnaireId) return
+      $(this).val('0').trigger('change')
 
-    $.get(`/api/questionnaire/${questionnaireId}`)
-      .done(function(questionnaire) {
-        if (!selectedQuestionnaires.find((selectedQuestionnaire) => selectedQuestionnaire.id === questionnaire.id)) {
-          selectedQuestionnaires = [...selectedQuestionnaires, questionnaire]
-        }
+      $.get(`/api/questionnaire/${questionnaireId}`)
+        .done(function(questionnaire) {
+          if (!selectedQuestionnaires.find((selectedQuestionnaire) => selectedQuestionnaire.id === questionnaire.id)) {
+            selectedQuestionnaires = [...selectedQuestionnaires, questionnaire]
+          }
 
-        drawRChart(selectedQuestionnaires)
-
-        console.log(selectedQuestionnaires)
-      })
-      .fail(function(xhr) {
-        console.log(xhr.responseText)
-      })
-
-    $(this).val('')
-  })
+          drawRChart(selectedQuestionnaires)
+        })
+        .fail(function(xhr) {
+          console.log(xhr.responseText)
+        })
+    })
 
   questionnaires.slice(0, 2).forEach((questionnaire) => {
     setTimeout(() => $('#select-questionnaires').val(questionnaire.id).trigger('change'), 200)
@@ -62,6 +68,11 @@ function drawRChart(questionnaires) {
     type: 'bar',
     data: data,
     options: {
+      plugins: {
+        legend: {
+          display: false
+        },
+      },
       scales: {
         y: {
           beginAtZero: true,
@@ -87,4 +98,40 @@ function drawRChart(questionnaires) {
   if (window.chart) window.chart.destroy()
 
   window.chart = new Chart(document.getElementById('canvas-questionnaire-r').getContext('2d'), config)
+
+  $('#selected-questionnaires-container').empty()
+
+  questionnaires.forEach((questionnaire, index) => {
+    $('#selected-questionnaires-container').append(`
+      <div
+        class="btn btn-sm"
+        style="background-color: ${backgroundColors[index]}; border-color: ${borderColors[index]};">
+        <button
+          data-type="detail"
+          data-questionnaire-id="${questionnaire.id}">
+          ${questionnaire.title}
+        </button>&nbsp;
+        <button
+          data-type="remove"
+          data-questionnaire-id="${questionnaire.id}">
+          <i class="ms-1 fa-solid fa-x fa-xs"></i>
+        </button>
+      </div>
+    `)
+  })
+
+  $('#selected-questionnaires-container button').off().on('click', function() {
+    const type = $(this).data('type')
+    const questionnaireId = parseInt($(this).data('questionnaire-id'))
+
+    if (type === 'remove') {
+      const filteredQuestionnaires = questionnaires.filter((questionnaire) => questionnaire.id !== questionnaireId)
+      drawRChart(filteredQuestionnaires)
+    }
+
+    if (type === 'detail') {
+      alert(questionnaireId)
+      // TODO: questionnaire detail
+    }
+  })
 }

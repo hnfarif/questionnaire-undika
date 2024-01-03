@@ -5,11 +5,12 @@
     window.questionnaires = @json($questionnaires);
   </script>
   @vite([
+    'resources/sass/dashboard.scss',
     'resources/js/dashboard.js'
   ])
 @endpush
 @section('content')
-  <div class="container-fluid px-4">
+  <div class="container px-4">
     <div class="d-flex align-items-center">
       <div class="flex-grow-1">
         <h1 class="mt-4">
@@ -61,19 +62,21 @@
     </div>
     <div class="card">
       <div class="card-body">
-        <label>
-          <select
-            id="select-questionnaires"
-            class="form-select">
-            <option value="">Pilih kuesioner</option>
-            @foreach($questionnaires as $questionnaire)
-              <option value="{{ $questionnaire->id }}">{{ $questionnaire->title }}</option>
-            @endforeach
-          </select>
-        </label>
-        <canvas id="canvas-questionnaire-r">
-
-        </canvas>
+        <div class="d-flex flex-wrap align-items-center mb-3 gap-2">
+          <label>
+            <select
+              id="select-questionnaires"
+              class="form-select form-select-sm"
+              data-placeholder="Tambahkan kuesioner">
+              <option disabled value="0">Tambahkan kuesioner</option>
+              @foreach($questionnaires as $questionnaire)
+                <option value="{{ $questionnaire->id }}">{{ $questionnaire->title }}</option>
+              @endforeach
+            </select>
+          </label>
+          <div id="selected-questionnaires-container" class="d-flex gap-2"></div>
+        </div>
+        <canvas id="canvas-questionnaire-r"></canvas>
       </div>
     </div>
   </div>
