@@ -1,6 +1,13 @@
 @extends('layouts.layout-dashboard')
 @section('content')
 <div class="container">
+  <div class="d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h1 class="mt-4">
+        Kuesioner
+      </h1>
+    </div>
+  </div>
   <table id="table-questionnaire" class="table">
     <thead>
       <tr>

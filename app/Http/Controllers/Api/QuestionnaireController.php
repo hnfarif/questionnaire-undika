@@ -12,7 +12,6 @@ use App\Models\Submission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class QuestionnaireController extends Controller
 {
@@ -21,14 +20,20 @@ class QuestionnaireController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id ?? StudyProgram::first()->id;
-        $semester = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
+
+        $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->value("id");
+
+        if ($request->get("studyProgramId") != "null") {
+            $studyProgramId = $request->get("studyProgramId");
+        }
+
+        $semester = Semester::whereStudyProgramId($studyProgramId)->value("smt_active");
 
         if ($request->has("semester")) {
             $semester = $request->get("semester");
         }
 
-        $questionnaires = Questionnaire::with('studyProgram')->semester($semester)->get();
+        $questionnaires = Questionnaire::with('studyProgram')->whereStudyProgramId($studyProgramId)->semester($semester)->get();
 
         return response()->json($questionnaires);
     }

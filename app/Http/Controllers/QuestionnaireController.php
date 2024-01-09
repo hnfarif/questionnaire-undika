@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Category;
+use App\Models\Faculty;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Semester;
@@ -20,13 +21,29 @@ class QuestionnaireController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $studyProgramId = StudyProgram::whereMngrId(auth()->user()->id)->first()->id ??
-            StudyProgram::first()->id;
+        if ($request->has("studyProgramId")) {
+            $studyProgramId = $request->get("studyProgramId");
+        } else {
+            $studyProgramId = StudyProgram::whereMngrId(auth()->user()->id)->first()->id;
+        }
         $semester = Semester::whereStudyProgramId($studyProgramId)->first();
 
         return view("questionnaire.index", compact("semester"));
+    }
+
+    public function questionnairePimpinanDekan(): View
+    {
+        $isDekan = Faculty::whereMngrId(auth()->user()->id)->first();
+        $studyPrograms = StudyProgram::query();
+        if ($isDekan) {
+            $studyPrograms = $studyPrograms->whereFacultyId($isDekan->id)->get();
+        } else {
+            $studyPrograms = $studyPrograms->get();
+        }
+
+        return view("questionnaire.pimpinan-dekan", compact("studyPrograms"));
     }
 
     /**

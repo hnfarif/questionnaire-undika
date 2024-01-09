@@ -29,6 +29,7 @@ Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->get('/dashboard', [D
 
 Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->controller(QuestionnaireController::class)->group(function () {
     Route::get('/questionnaire', 'index')->name('questionnaire.index');
+    Route::get('/questionnaire/pimpinan-dekan', 'questionnairePimpinanDekan')->name('questionnaire.pimpinan');
     Route::get('/questionnaire/{questionnaire}', 'show')->name('questionnaire.show');
     Route::patch('/questionnaire/{questionnaire}/submit', 'submit')->name('questionnaire.submit');
     Route::patch('/questionnaire/{questionnaire}/approve', 'approve')->name('questionnaire.approve');
