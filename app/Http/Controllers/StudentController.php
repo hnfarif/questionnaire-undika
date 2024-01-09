@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Models\Questionnaire;
 use App\Models\StudyProgram;
+use App\Models\Submission;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -13,5 +15,25 @@ class StudentController extends Controller
     {
         $studyPrograms = StudyProgram::all();
         return view('student.index', compact('studyPrograms'));
+    }
+
+    public function questionnaire(): View
+    {
+        $questionnaires = Questionnaire::whereStudyProgramId(Auth::user()
+            ->student
+            ->study_program_id)
+            ->whereStatus("APPROVED")
+            ->get();
+
+        $nim = Auth::user()->id;
+
+        foreach ($questionnaires as $questionnaire) {
+            $hasSubmission = Submission::query()
+                ->where('questionnaire_id', $questionnaire->id)
+                ->where('nim', $nim)->first();
+            $questionnaire['hasSubmission'] = $hasSubmission ? true : false;
+        }
+
+        return view('student.questionnaire', compact('questionnaires'));
     }
 }

@@ -4,10 +4,12 @@ import 'flatpickr/dist/flatpickr.css'
 import Swal from 'sweetalert2'
 
 $(function () {
+  const urlParams = new URLSearchParams(window.location.search)
+  const prodi = urlParams.get('studyProgramId')
   const table = $('#table-questionnaire').DataTable({
     ajax: {
       method: 'GET',
-      url: 'api/questionnaire',
+      url: `api/questionnaire?studyProgramId=${prodi}`,
       dataSrc: '',
     },
     columns: [

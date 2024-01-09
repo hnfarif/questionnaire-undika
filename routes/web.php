@@ -25,25 +25,27 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::middleware('auth')->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->controller(QuestionnaireController::class)->group(function () {
+Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->controller(QuestionnaireController::class)->group(function () {
     Route::get('/questionnaire', 'index')->name('questionnaire.index');
+    Route::get('/questionnaire/pimpinan-dekan', 'questionnairePimpinanDekan')->name('questionnaire.pimpinan');
     Route::get('/questionnaire/{questionnaire}', 'show')->name('questionnaire.show');
     Route::patch('/questionnaire/{questionnaire}/submit', 'submit')->name('questionnaire.submit');
     Route::patch('/questionnaire/{questionnaire}/approve', 'approve')->name('questionnaire.approve');
     Route::patch('/questionnaire/{questionnaire}/reject', 'reject')->name('questionnaire.reject');
 });
 
-Route::middleware('auth')->controller(QuestionController::class)->group(function () {
+Route::middleware('ensureUserRole:MAHASISWA')->controller(QuestionController::class)->group(function () {
     Route::get('/question', 'index')->name('question.index');
 });
 
-Route::middleware('auth')->controller(SubmissionController::class)->group(function () {
-    Route::get('/submission', 'index')->name('submission.index');
-    Route::post('/submission', 'store')->name('submission.store');
+Route::controller(SubmissionController::class)->group(function () {
+    Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->get('/submission', 'index')->name('submission.index');
+    Route::middleware('ensureUserRole:MAHASISWA')->post('/submission', 'store')->name('submission.store');
 });
 
-Route::middleware('auth')->controller(StudentController::class)->group(function () {
-    Route::get('/student', 'index')->name('student.index');
+Route::controller(StudentController::class)->group(function () {
+    Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->get('/student', 'index')->name('student.index');
+    Route::middleware('ensureUserRole:MAHASISWA')->get('/student/questionnaire', 'questionnaire')->name('student.questionnaire');
 });

@@ -8,7 +8,7 @@ const backgroundColors = [
   'rgba(255, 159, 64, 0.2)',
   'rgba(75, 192, 192, 0.2)',
   'rgba(47, 242, 21, 0.2)',
-  'rgba(153, 102, 255, 0.2)'
+  'rgba(153, 102, 255, 0.2)',
 ]
 
 const borderColors = [
@@ -16,32 +16,36 @@ const borderColors = [
   'rgb(255, 159, 64)',
   'rgb(75, 192, 192)',
   'rgb(47, 242, 21)',
-  'rgb(153, 102, 255)'
+  'rgb(153, 102, 255)',
 ]
 
-$(function() {
+$(function () {
   select2($)
 
   let selectedQuestionnaires = []
   $('#select-questionnaires')
     .select2({
-      theme: 'bootstrap-5'
+      theme: 'bootstrap-5',
     })
-    .on('change', function(event) {
+    .on('change', function (event) {
       const questionnaireId = parseInt(event.target.value)
       if (!questionnaireId) return
 
       $(this).val('0').trigger('change')
 
       $.get(`/api/questionnaire/${questionnaireId}`)
-        .done(function(questionnaire) {
-          if (!selectedQuestionnaires.find((selectedQuestionnaire) => selectedQuestionnaire.id === questionnaire.id)) {
+        .done(function (questionnaire) {
+          if (
+            !selectedQuestionnaires.find(
+              (selectedQuestionnaire) => selectedQuestionnaire.id === questionnaire.id
+            )
+          ) {
             selectedQuestionnaires = [...selectedQuestionnaires, questionnaire]
           }
 
           drawRChart(selectedQuestionnaires)
         })
-        .fail(function(xhr) {
+        .fail(function (xhr) {
           console.log(xhr.responseText)
         })
     })
@@ -59,7 +63,7 @@ function drawRChart(questionnaires) {
     data: Object.values(questionnaire.r),
     backgroundColor: backgroundColors[index],
     borderColor: borderColors[index],
-    borderWidth: 1
+    borderWidth: 1,
   }))
 
   const data = { labels, datasets }
@@ -70,7 +74,7 @@ function drawRChart(questionnaires) {
     options: {
       plugins: {
         legend: {
-          display: false
+          display: false,
         },
       },
       scales: {
@@ -79,25 +83,28 @@ function drawRChart(questionnaires) {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16
-            }
-          }
+              size: 16,
+            },
+          },
         },
         x: {
           ticks: {
             font: {
               family: 'Consolas',
-              size: 16
-            }
-          }
-        }
-      }
-    }
+              size: 16,
+            },
+          },
+        },
+      },
+    },
   }
 
   if (window.chart) window.chart.destroy()
 
-  window.chart = new Chart(document.getElementById('canvas-questionnaire-r').getContext('2d'), config)
+  window.chart = new Chart(
+    document.getElementById('canvas-questionnaire-r').getContext('2d'),
+    config
+  )
 
   $('#selected-questionnaires-container').empty()
 
@@ -108,7 +115,9 @@ function drawRChart(questionnaires) {
         style="background-color: ${backgroundColors[index]}; border-color: ${borderColors[index]};">
         <button
           data-type="detail"
-          data-questionnaire-id="${questionnaire.id}">
+          data-questionnaire-id="${questionnaire.id}"
+          style="max-width: 240px"
+          class="text-truncate">
           ${questionnaire.title}
         </button>&nbsp;
         <button
@@ -120,18 +129,22 @@ function drawRChart(questionnaires) {
     `)
   })
 
-  $('#selected-questionnaires-container button').off().on('click', function() {
-    const type = $(this).data('type')
-    const questionnaireId = parseInt($(this).data('questionnaire-id'))
+  $('#selected-questionnaires-container button')
+    .off()
+    .on('click', function () {
+      const type = $(this).data('type')
+      const questionnaireId = parseInt($(this).data('questionnaire-id'))
 
-    if (type === 'remove') {
-      const filteredQuestionnaires = questionnaires.filter((questionnaire) => questionnaire.id !== questionnaireId)
-      drawRChart(filteredQuestionnaires)
-    }
+      if (type === 'remove') {
+        const filteredQuestionnaires = questionnaires.filter(
+          (questionnaire) => questionnaire.id !== questionnaireId
+        )
+        drawRChart(filteredQuestionnaires)
+      }
 
-    if (type === 'detail') {
-      alert(questionnaireId)
-      // TODO: questionnaire detail
-    }
-  })
+      if (type === 'detail') {
+        alert(questionnaireId)
+        // TODO: questionnaire detail
+      }
+    })
 }
