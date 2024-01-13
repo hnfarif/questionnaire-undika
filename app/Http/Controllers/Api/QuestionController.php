@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\Questionnaire;
@@ -17,14 +18,102 @@ class QuestionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $questions = [];
         if ($request->has('questionnaireId')) {
-            $questions = Question::with('questionnaire')->where('questionnaire_id', '=', $request->questionnaireId)->get();
-            return response()->json($questions);
+            $questions = Question::with('questionnaire')
+                ->where('questionnaire_id', '=', $request->questionnaireId)
+                ->get();
+        } else {
+            $questions = Question::all();
         }
 
-        $questions = Question::all();
+        $this->calculateMean($questions);
+        $this->calculateMedian($questions);
+        $this->calculateMode($questions);
+        $this->calculateVariance($questions);
+
         return response()->json($questions);
     }
+
+    private function calculateMean($questions)
+    {
+
+        foreach ($questions as $question) {
+            $answers = Answer::query()->where('question_id', $question->id)->get();
+            $n = count($answers);
+
+            if ($n === 0) {
+                $question['mean'] = 0;
+                return;
+            }
+
+            $sumOfScale = 0;
+            foreach ($answers as $answer) {
+                $sumOfScale += $answer->scale;
+            }
+            $question['mean'] = $sumOfScale / $n;
+        }
+    }
+
+    private function calculateMedian($questions)
+    {
+        foreach ($questions as &$question) {
+            $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->sort()->toArray();
+            $n = count($answers);
+
+            if ($n === 0) {
+                $question['median'] = 0;
+            } else if ($n === 1) {
+                $question['median'] = $answers[0];
+            } else if ($n % 2 === 0) {
+                // If the count is even, calculate the average of the middle two values
+                $middle1 = $answers[$n / 2 - 1];
+                $middle2 = $answers[$n / 2];
+                $question['median'] = ($middle1 + $middle2) / 2;
+            } else {
+                // If the count is odd, pick the middle value
+                $question['median'] = $answers[floor($n / 2)];
+            }
+        }
+    }
+
+    private function calculateMode($questions)
+    {
+        foreach ($questions as &$question) {
+            $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->toArray();
+            $frequency = array_count_values($answers);
+
+            // Find the mode(s)
+            if (count($answers) === 0) {
+                $question['mode'] = 0;
+            } else {
+                $maxFrequency = max($frequency);
+                $modes = array_keys($frequency, $maxFrequency);
+                $question['mode'] = empty($modes) ? null : $modes[0]; // Assuming we take the first mode if there are multiple
+            }
+        }
+    }
+
+    private function calculateVariance($questions)
+    {
+        foreach ($questions as &$question) {
+            $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->toArray();
+            $mean = $question['mean'];
+
+            $sumOfSquares = array_sum(array_map(function ($value) use ($mean) {
+                return pow($value - $mean, 2);
+            }, $answers));
+
+            $n = count($answers);
+
+            if ($n === 0) {
+                $question['variance'] = 0;
+            } else {
+                $question['variance'] = $sumOfSquares / $n;
+            }
+        }
+    }
+
 
     /**
      * Store a newly created resource in storage.
