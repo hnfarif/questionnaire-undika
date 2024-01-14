@@ -33,7 +33,7 @@ class QuestionController extends Controller
         $questionnaire = Questionnaire::findOrFail($questionnaireId);
 
         $startDate = Carbon::create($questionnaire->start_date);
-        $endDate = Carbon::create($questionnaire->end_date);
+        $endDate = Carbon::create($questionnaire->end_date)->addDays(1);
         $now = Carbon::now();
         $isActive = $now >= $startDate && $now <= $endDate;
         $questions = Question::where('questionnaire_id', '=', $questionnaire->id)->get();

@@ -5,11 +5,13 @@ import Swal from 'sweetalert2'
 
 $(function () {
   const urlParams = new URLSearchParams(window.location.search)
-  const prodi = urlParams.get('studyProgramId')
+  const studyProgramId = urlParams.get('studyProgramId')
   const table = $('#table-questionnaire').DataTable({
     ajax: {
       method: 'GET',
-      url: `api/questionnaire?studyProgramId=${prodi}`,
+      url: studyProgramId
+        ? `/api/questionnaire?studyProgramId=${studyProgramId}`
+        : '/api/questionnaire',
       dataSrc: '',
     },
     columns: [
@@ -45,9 +47,11 @@ $(function () {
           <div>
             ${
               questionnaire.semester === questionnaire.study_program.semester.smt_active
-                ? `<button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
+                ? questionnaire.status !== 'APPROVED'
+                  ? `<button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>`
+                  : ''
                 : `<button class="btn btn-info btn-duplicate" title="Duplikat Kuesioner" data-id="${questionnaire.id}">
                 <i class="fa-regular fa-clone"></i>
               </button>`
@@ -105,6 +109,11 @@ $(function () {
       })
       .fail((xhr) => {
         console.log(xhr.responseText)
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: JSON.parse(xhr.responseText).message,
+        })
       })
   }
 
@@ -170,13 +179,22 @@ $(function () {
       },
       error: function (xhr) {
         console.log(xhr.responseText)
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: JSON.parse(xhr.responseText).message,
+        })
       },
     })
   }
 
   function handleSelectSemester() {
-    $.get(`/api/questionnaire?semester=${$(this).val()}`)
+    const urlSelected = studyProgramId
+      ? `/api/questionnaire?studyProgramId=${studyProgramId}&semester=${$(this).val()}`
+      : `/api/questionnaire?semester=${$(this).val()}`
+    $.get(urlSelected)
       .done((questionnaires) => {
+        console.log(questionnaires)
         table.clear().rows.add(questionnaires).draw()
       })
       .fail((xhr) => {

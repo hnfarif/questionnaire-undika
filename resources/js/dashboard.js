@@ -22,8 +22,7 @@ const borderColors = [
 $(function () {
   select2($)
 
-  let selectedQuestionnaires = []
-  $('#select-questionnaires')
+  $('#select-questionnaire')
     .select2({
       theme: 'bootstrap-5',
     })
@@ -31,40 +30,105 @@ $(function () {
       const questionnaireId = parseInt(event.target.value)
       if (!questionnaireId) return
 
-      $(this).val('0').trigger('change')
-
       $.get(`/api/questionnaire/${questionnaireId}`)
         .done(function (questionnaire) {
-          if (
-            !selectedQuestionnaires.find(
-              (selectedQuestionnaire) => selectedQuestionnaire.id === questionnaire.id
-            )
-          ) {
-            selectedQuestionnaires = [...selectedQuestionnaires, questionnaire]
-          }
+          drawStatistic(questionnaire)
 
-          drawRChart(selectedQuestionnaires)
+          $.get(`/api/question?questionnaireId=${questionnaire.id}`)
+            .done(function (questions) {
+              $('#select-category')
+                .off()
+                .on('change', function (event) {
+                  const categoryId = parseInt(event.target.value)
+                  if (!categoryId) return
+
+                  drawChart('Mean', 'canvas-mean', questions, 'mean', categoryId)
+                  drawChart('Mode', 'canvas-mode', questions, 'mode', categoryId)
+                  drawChart('Median', 'canvas-median', questions, 'median', categoryId)
+                  drawChart('Variance', 'canvas-variance', questions, 'variance', categoryId)
+                })
+
+              $('#select-category').val(`${categories[0].id}`).trigger('change')
+            })
+            .fail(function (xhr) {
+              console.log(xhr.responseText)
+            })
         })
         .fail(function (xhr) {
           console.log(xhr.responseText)
         })
     })
 
-  questionnaires.slice(0, 2).forEach((questionnaire) => {
-    setTimeout(() => $('#select-questionnaires').val(questionnaire.id).trigger('change'), 200)
-  })
+  if (questionnaires.length) {
+    $('#select-questionnaire').val(`${questionnaires[0].id}`).trigger('change')
+  }
 })
 
-function drawRChart(questionnaires) {
-  const labels = categories.map((category) => category.name)
+const charts = {}
 
-  const datasets = questionnaires.map((questionnaire, index) => ({
-    label: questionnaire.title,
-    data: Object.values(questionnaire.r),
-    backgroundColor: backgroundColors[index],
-    borderColor: borderColors[index],
-    borderWidth: 1,
-  }))
+const subscriptMap = {
+  0: '₀',
+  1: '₁',
+  2: '₂',
+  3: '₃',
+  4: '₄',
+  5: '₅',
+  6: '₆',
+  7: '₇',
+  8: '₈',
+  9: '₉',
+}
+
+function drawStatistic(questionnaire) {
+  console.log(questionnaire)
+  const numberOfStudents = questionnaire.study_program.students.length
+  const numberOfSubmissions = questionnaire.submissions.length
+  const semester = questionnaire.semester
+  $('#stat-number-of-students').text(numberOfStudents)
+  $('#stat-number-of-submissions').text(numberOfSubmissions)
+  $('#stat-semester').text(semester)
+}
+
+function drawChart(label, canvasId, questions, dataKey, categoryId) {
+  const counter = {}
+  const labels = questions
+    .filter((question) => question.category_id === categoryId)
+    .map((question) => {
+      const number = counter[question.category_id]
+      if (typeof number === 'undefined') {
+        counter[question.category_id] = 1
+      } else {
+        counter[question.category_id] += 1
+      }
+      return `X${question.category_id} ${counter[question.category_id]}`.replace(
+        /[0-9]/g,
+        (match) => subscriptMap[match]
+      )
+    })
+
+  const datasets = [
+    {
+      label: label,
+      data: questions
+        .filter((question) => question.category_id === categoryId)
+        .map((question) => question[dataKey]),
+      backgroundColor: questions
+        .filter((question) => question.category_id === categoryId)
+        .map(
+          (question) =>
+            backgroundColors[
+              categories.findIndex((category) => category.id === question.category_id)
+            ]
+        ),
+      borderColor: questions
+        .filter((question) => question.category_id === categoryId)
+        .map(
+          (question) =>
+            borderColors[categories.findIndex((category) => category.id === question.category_id)]
+        ),
+      borderWidth: 1,
+    },
+  ]
 
   const data = { labels, datasets }
 
@@ -99,52 +163,9 @@ function drawRChart(questionnaires) {
     },
   }
 
-  if (window.chart) window.chart.destroy()
+  if (charts[canvasId]) {
+    charts[canvasId].destroy()
+  }
 
-  window.chart = new Chart(
-    document.getElementById('canvas-questionnaire-r').getContext('2d'),
-    config
-  )
-
-  $('#selected-questionnaires-container').empty()
-
-  questionnaires.forEach((questionnaire, index) => {
-    $('#selected-questionnaires-container').append(`
-      <div
-        class="btn btn-sm"
-        style="background-color: ${backgroundColors[index]}; border-color: ${borderColors[index]};">
-        <button
-          data-type="detail"
-          data-questionnaire-id="${questionnaire.id}"
-          style="max-width: 240px"
-          class="text-truncate">
-          ${questionnaire.title}
-        </button>&nbsp;
-        <button
-          data-type="remove"
-          data-questionnaire-id="${questionnaire.id}">
-          <i class="ms-1 fa-solid fa-x fa-xs"></i>
-        </button>
-      </div>
-    `)
-  })
-
-  $('#selected-questionnaires-container button')
-    .off()
-    .on('click', function () {
-      const type = $(this).data('type')
-      const questionnaireId = parseInt($(this).data('questionnaire-id'))
-
-      if (type === 'remove') {
-        const filteredQuestionnaires = questionnaires.filter(
-          (questionnaire) => questionnaire.id !== questionnaireId
-        )
-        drawRChart(filteredQuestionnaires)
-      }
-
-      if (type === 'detail') {
-        alert(questionnaireId)
-        // TODO: questionnaire detail
-      }
-    })
+  charts[canvasId] = new Chart(document.getElementById(canvasId).getContext('2d'), config)
 }
