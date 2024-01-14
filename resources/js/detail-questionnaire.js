@@ -1,4 +1,3 @@
-import { getJSON } from 'jquery'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import Swal from 'sweetalert2'
@@ -74,14 +73,13 @@ $(function () {
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
       .done(function (questions) {
         $('.question-item').empty()
-        console.log(questions)
         questions.forEach((question) => {
-          $(`#accordion-${question.category_id} .question-item`).append(`
+          $(`#accordion-${question.category_id} .question-items`).append(`
             <div
               id="question-${question.id}"
               data-question-id="${question.id}"
               data-category-id="${question.category_id}"
-              class="${
+              class="question-item ${
                 role === 'KAPRODI' && question.questionnaire.status !== 'APPROVED' ? 'question' : ''
               } input-group gap-3 mb-3">
                 <div class="form-control flex-grow-1" style="cursor: text">${
@@ -178,4 +176,14 @@ $(function () {
         console.log(xhr.responseText)
       })
   }
+
+  $('#form-submit').on('submit', function (event) {
+    event.preventDefault()
+    let valid = true
+    categories.forEach((category) => {
+      const numberOfQuestions = $(`[data-category-id="${category.id}"]`).length
+      console.log(numberOfQuestions)
+    })
+    // if (valid) event.target.submit()
+  })
 })

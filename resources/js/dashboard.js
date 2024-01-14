@@ -32,6 +32,8 @@ $(function () {
 
       $.get(`/api/questionnaire/${questionnaireId}`)
         .done(function (questionnaire) {
+          drawStatistic(questionnaire)
+
           $.get(`/api/question?questionnaireId=${questionnaire.id}`)
             .done(function (questions) {
               $('#select-category')
@@ -75,6 +77,16 @@ const subscriptMap = {
   7: '₇',
   8: '₈',
   9: '₉',
+}
+
+function drawStatistic(questionnaire) {
+  console.log(questionnaire)
+  const numberOfStudents = questionnaire.study_program.students.length
+  const numberOfSubmissions = questionnaire.submissions.length
+  const semester = questionnaire.semester
+  $('#stat-number-of-students').text(numberOfStudents)
+  $('#stat-number-of-submissions').text(numberOfSubmissions)
+  $('#stat-semester').text(semester)
 }
 
 function drawChart(label, canvasId, questions, dataKey, categoryId) {

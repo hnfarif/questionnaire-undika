@@ -45,7 +45,3 @@ Route::controller(SubmissionController::class)->group(function () {
     Route::middleware('ensureUserRole:MAHASISWA')->post('/submission', 'store')->name('submission.store');
 });
 
-Route::controller(StudentController::class)->group(function () {
-    Route::middleware('ensureUserRole:PIMPINAN,DEKAN,KAPRODI')->get('/student', 'index')->name('student.index');
-    Route::middleware('ensureUserRole:MAHASISWA')->get('/student/questionnaire', 'questionnaire')->name('student.questionnaire');
-});

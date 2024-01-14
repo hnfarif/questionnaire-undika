@@ -9,6 +9,8 @@ use App\Models\Questionnaire;
 use App\Models\Semester;
 use App\Models\StudyProgram;
 use App\Models\Submission;
+use Carbon\Carbon;
+use ErrorException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,13 +25,14 @@ class QuestionnaireController extends Controller
 
         $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->value("id");
 
-        if ($request->get("studyProgramId") != "null") {
-            $studyProgramId = $request->get("studyProgramId");
+        if ($request->has("studyProgramId")) {
+            $studyProgramId = intval($request->get("studyProgramId"));
         }
 
         $semester = Semester::whereStudyProgramId($studyProgramId)->value("smt_active");
 
         if ($request->has("semester")) {
+
             $semester = $request->get("semester");
         }
 
@@ -53,6 +56,25 @@ class QuestionnaireController extends Controller
         $studyProgramId = StudyProgram::whereMngrId(Auth::user()->id)->first()->id;
         $semesterActive = Semester::whereStudyProgramId($studyProgramId)->first()->smt_active;
 
+        $startDate = Carbon::parse($data['startDate']);
+        $endDate = Carbon::parse($data['endDate'])->addDays(1);
+
+        $overlapCheck = Questionnaire::where('study_program_id', $studyProgramId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<', $startDate)
+                            ->where('end_date', '>', $endDate);
+                    });
+            })
+            ->exists();
+
+        if ($overlapCheck) {
+            throw new ErrorException('Overlap schedule');
+        }
+
+
         $questionnaire = Questionnaire::create([
             'study_program_id' => $studyProgramId,
             'title' => $data['title'],
@@ -71,7 +93,7 @@ class QuestionnaireController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $questionnaire = Questionnaire::findOrFail($id);
+        $questionnaire = Questionnaire::with('submissions', 'studyProgram.students')->findOrFail($id);
 
         $submissions = Submission::where('questionnaire_id', $questionnaire->id)
             ->with(['student', 'answers.question.category'])
@@ -98,6 +120,26 @@ class QuestionnaireController extends Controller
         ]);
 
         $questionnaire = Questionnaire::findOrFail($id);
+
+        $startDate = Carbon::parse($data['startDate']);
+        $endDate = Carbon::parse($data['endDate'])->addDays(1);
+
+        $overlapCheck = Questionnaire::where('study_program_id', $questionnaire->study_program_id)
+            ->where('id', '!=', $questionnaire->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<', $startDate)
+                            ->where('end_date', '>', $endDate);
+                    });
+            })
+            ->exists();
+
+        if ($overlapCheck) {
+            throw new ErrorException('Overlap schedule');
+        }
+
         $questionnaire->title = $data['title'];
         $questionnaire->description = $data['description'];
         $questionnaire->start_date = $data['startDate'];

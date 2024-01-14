@@ -18,6 +18,11 @@ class Submission extends Model
         'nim'
     ];
 
+    public function questionnaire(): BelongsTo
+    {
+        return $this->belongsTo(Questionnaire::class, 'questionnaire_id', 'id');
+
+    }
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'nim', 'nim');

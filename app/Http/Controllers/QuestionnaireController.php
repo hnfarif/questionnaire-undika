@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Answer;
 use App\Models\Category;
 use App\Models\Faculty;
-use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Semester;
 use App\Models\StudyProgram;
-use DateTime;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class QuestionnaireController extends Controller

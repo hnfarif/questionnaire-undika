@@ -26,53 +26,53 @@
       </ol>
     </div>
   </div>
-  <div class="row g-3 mb-3">
-    <div class="col-12 col-sm-6 col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title text-center">Jumlah Mahasiswa Sudah Mengisi</div>
-          <h5 class="h1 text-center">{{ $numberOfSubmissions }}</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-6 col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title text-center">Jumlah Mahasiswa</div>
-          <h5 class="h1 text-center">{{ $numberOfSubmissions }}</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-6 col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title text-center">Periode Saat Ini</div>
-          <h5 class="h1 text-center">{{ $smt_active }}</h5>
-        </div>
-      </div>
-    </div>
+  <div class="d-flex flex-wrap align-items-center mb-3 gap-2">
+    <label>
+      <select id="select-questionnaire" class="form-select form-select-sm" data-placeholder="Tambahkan kuesioner"
+        style="max-width: 240px">
+        <option disabled selected value="0">Pilih kuesioner</option>
+        @foreach($questionnaires as $questionnaire)
+        <option value="{{ $questionnaire->id }}">{{ $questionnaire->title }}</option>
+        @endforeach
+      </select>
+    </label>
+    <label>
+      <select id="select-category" class="form-select form-select-sm" data-placeholder="Tambahkan kuesioner"
+        style="max-width: 240px">
+        <option disabled selected value="0">Pilih kategori</option>
+        @foreach($categories as $category)
+        <option value="{{ $category->id }}">{{ $category->name }}</option>
+        @endforeach
+      </select>
+    </label>
   </div>
   <div class="card">
     <div class="card-body">
-      <div class="d-flex flex-wrap align-items-center mb-3 gap-2">
-        <label>
-          <select id="select-questionnaire" class="form-select form-select-sm" data-placeholder="Tambahkan kuesioner"
-            style="max-width: 240px">
-            <option disabled selected value="0">Pilih kuesioner</option>
-            @foreach($questionnaires as $questionnaire)
-            <option value="{{ $questionnaire->id }}">{{ $questionnaire->title }}</option>
-            @endforeach
-          </select>
-        </label>
-        <label>
-          <select id="select-category" class="form-select form-select-sm" data-placeholder="Tambahkan kuesioner"
-            style="max-width: 240px">
-            <option disabled selected value="0">Pilih kategori</option>
-            @foreach($categories as $category)
-            <option value="{{ $category->id }}">{{ $category->name }}</option>
-            @endforeach
-          </select>
-        </label>
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title text-center">Jumlah Mahasiswa Sudah Mengisi</div>
+              <h5 class="h1 text-center" id="stat-number-of-submissions"> - </h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title text-center">Jumlah Mahasiswa</div>
+              <h5 class="h1 text-center" id="stat-number-of-students"> - </h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title text-center">Semester</div>
+              <h5 class="h1 text-center" id="stat-semester"> - </h5>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-12 col-md-6">

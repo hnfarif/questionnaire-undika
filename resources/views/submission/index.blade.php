@@ -97,8 +97,8 @@
                 <th colspan="3" style="text-align: right">Hasil Validitas</th>
                 @foreach($questions as $index => $question)
                 <th>
-                  <span data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="{{ $rxy[$question->id] > 0.5 ? 'Valid' : 'Tidak Valid'}}">
+                  <span data-r-value={{ $rValue }} data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="{{ $rxy[$question->id] > $rValue ? 'Valid' : 'Tidak Valid'}}">
                     {{ number_format($rxy[$question->id], 2) }}
                   </span>
                 </th>
