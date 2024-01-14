@@ -175,15 +175,25 @@ $(function () {
       .fail(function (xhr) {
         console.log(xhr.responseText)
       })
-  }
 
-  $('#form-submit').on('submit', function (event) {
-    event.preventDefault()
-    let valid = true
-    categories.forEach((category) => {
-      const numberOfQuestions = $(`[data-category-id="${category.id}"]`).length
-      console.log(numberOfQuestions)
-    })
-    // if (valid) event.target.submit()
-  })
+    $('#form-submit')
+      .off()
+      .on('submit', function (event) {
+        event.preventDefault()
+        let valid = true
+        categories.forEach((category) => {
+          const numberOfQuestions = $(`[data-category-id="${category.id}"].question-item`).length
+          if (numberOfQuestions < 2) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: `Kategori ${category.name} harus memiliki minimal 2 pertanyaan`,
+            })
+            valid = false
+            return
+          }
+        })
+        if (valid) event.target.submit()
+      })
+  }
 })
