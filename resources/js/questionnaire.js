@@ -47,7 +47,7 @@ $(function () {
           <div>
             ${
               questionnaire.semester === questionnaire.study_program.semester.smt_active
-                ? questionnaire.status !== 'APPROVED'
+                ? questionnaire.status !== 'APPROVED' && user.roles.some((role) => role.name === 'KAPRODI')
                   ? `<button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>`
