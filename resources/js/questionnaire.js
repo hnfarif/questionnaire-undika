@@ -47,14 +47,17 @@ $(function () {
           <div>
             ${
               questionnaire.semester === questionnaire.study_program.semester.smt_active
-                ? questionnaire.status !== 'APPROVED' && user.roles.some((role) => role.name === 'KAPRODI')
+                ? questionnaire.status !== 'APPROVED' &&
+                  user.roles.some((role) => role.name === 'KAPRODI')
                   ? `<button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#modal-update" data-id="${questionnaire.id}">
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>`
                   : ''
-                : `<button class="btn btn-info btn-duplicate" title="Duplikat Kuesioner" data-id="${questionnaire.id}">
+                : user.roles.some((role) => role.name === 'KAPRODI')
+                ? `<button class="btn btn-info btn-duplicate" title="Duplikat Kuesioner" data-id="${questionnaire.id}">
                 <i class="fa-regular fa-clone"></i>
               </button>`
+                : ''
             }
 
             <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
