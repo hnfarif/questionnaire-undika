@@ -99,7 +99,7 @@
                 <th>
                   <span data-r-value={{ $rValue }} data-bs-toggle="tooltip" data-bs-placement="bottom"
                     title="{{ $rxy[$question->id] > $rValue ? 'Valid' : 'Tidak Valid'}}">
-                    {{ number_format($rxy[$question->id], 2) }}
+                    {{ number_format($rxy[$question->id], 3) }}
                   </span>
                 </th>
                 @endforeach
@@ -111,7 +111,7 @@
                   @if(!isset($shouldRVisible[$question->category_id]))
                   <span data-bs-toggle="tooltip" data-bs-placement="bottom"
                     title="{{ $r[$question->category_id] > 0.70 ? 'Reliable' : 'Tidak Reliable'}}">
-                    {{ number_format($r[$question->category_id], 2) }}
+                    {{ number_format($r[$question->category_id], 3) }}
                   </span>
                   @endif
                 </th>
