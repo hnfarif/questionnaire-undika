@@ -175,28 +175,32 @@ class SubmissionController extends Controller
             abort(404);
         }
 
-        $questionnaireId = $request->questionnaireId;
-        $questionnaire = Questionnaire::findOrFail($questionnaireId);
-        $submissions = Submission::where('questionnaire_id', $questionnaireId)
-            ->with(['student', 'answers.question.category'])
-            ->get();
-        $questions = Question::where('questionnaire_id', $questionnaireId)->get();
+        try {
+            $questionnaireId = $request->questionnaireId;
+            $questionnaire = Questionnaire::findOrFail($questionnaireId);
+            $submissions = Submission::where('questionnaire_id', $questionnaireId)
+                ->with(['student', 'answers.question.category'])
+                ->get();
+            $questions = Question::where('questionnaire_id', $questionnaireId)->get();
 
-        $rValue = 0;
-        $numberOfSubmissions = count($submissions);
-        if ($numberOfSubmissions > count($this->rValues)) {
-            $rValue = $this->rValues[count($submissions) - 1];
-        } else {
-            $rValue = $this->rValues[$numberOfSubmissions - 1];
+            $rValue = 0;
+            $numberOfSubmissions = count($submissions);
+            if ($numberOfSubmissions > count($this->rValues)) {
+                $rValue = $this->rValues[count($submissions) - 1];
+            } else {
+                $rValue = $this->rValues[$numberOfSubmissions - 1];
+            }
+
+            $categories = Category::orderBy('id', 'asc')->get();
+
+            $rxy = self::getRxy($questions, $submissions);
+
+            $r = self::getR($submissions, $categories, $questions);
+
+            $this->calculateMean($questions);
+        } catch (\Throwable $th) {
+            abort(404);
         }
-
-        $categories = Category::orderBy('id', 'asc')->get();
-
-        $rxy = self::getRxy($questions, $submissions);
-
-        $r = self::getR($submissions, $categories, $questions);
-
-        $this->calculateMean($questions);
 
         return view('submission.index', compact('rValue', 'questionnaire', 'submissions', 'questions', 'categories', 'rxy', 'r'));
     }
