@@ -43,4 +43,9 @@ class Questionnaire extends Model
     {
         $query->whereSemester($semester);
     }
+
+    public function scopeStudyProgram(Builder $query, array $studyPrograms): void
+    {
+        $query->whereIn("study_program_id", $studyPrograms);
+    }
 }
