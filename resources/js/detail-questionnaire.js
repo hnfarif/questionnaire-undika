@@ -51,6 +51,17 @@ $(function () {
     return () => {
       const description = $('#editor-add .ql-editor').html()
 
+      if (!$('#editor-add .ql-editor').text().trim()) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Deskripsi harus diisi',
+        })
+        return
+      }
+
+      $('#btn-save').prop('disabled', true)
+
       $.post({
         url: '/api/question',
         data: JSON.stringify({ questionnaireId: questionnaire.id, categoryId, description }),
@@ -61,9 +72,11 @@ $(function () {
         .done(() => {
           $('#modal-add').modal('hide')
           renderQuestions()
+          setTimeout(() => $('#btn-save').prop('disabled', false), 1000)
         })
         .fail((xhr) => {
           console.log(xhr.responseText)
+          setTimeout(() => $('#btn-save').prop('disabled', false), 1000)
         })
     }
   }
@@ -72,7 +85,7 @@ $(function () {
     const role = $('#body-section').data('role')
     $.get(`/api/question?questionnaireId=${questionnaire.id}`)
       .done(function (questions) {
-        $('.question-item').empty()
+        $('.question-items').empty()
         questions.forEach((question) => {
           $(`#accordion-${question.category_id} .question-items`).append(`
             <div
@@ -82,7 +95,7 @@ $(function () {
               class="question-item ${
                 role === 'KAPRODI' && question.questionnaire.status !== 'APPROVED' ? 'question' : ''
               } input-group gap-3 mb-3">
-                <div class="form-control flex-grow-1" style="cursor: text">${
+                <div class="form-control flex-grow-1" style="cursor: text"> ${
                   question.description
                 }</div>
                 <div class="input-group-append my-auto">
@@ -120,6 +133,17 @@ $(function () {
                   .on('click', function () {
                     const description = $('#editor-update .ql-editor').html()
 
+                    if (!$('#editor-update .ql-editor').text().trim()) {
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Deskripsi harus diisi',
+                      })
+                      return
+                    }
+
+                    $('#btn-update').prop('disabled', true)
+
                     $.ajax({
                       url: `/api/question/${questionId}`,
                       method: 'PUT',
@@ -134,9 +158,11 @@ $(function () {
                       success: function () {
                         renderQuestions()
                         $('#modal-update').modal('hide')
+                        setTimeout(() => $('#btn-update').prop('disabled', false), 1000)
                       },
                       body: JSON.stringify({ description }),
                       error: function (xhr) {
+                        setTimeout(() => $('#btn-update').prop('disabled', false), 1000)
                         console.log(xhr.responseText)
                       },
                     })
