@@ -41,7 +41,8 @@
         Daftar Pertanyaan
       </div>
       <div class="d-flex gap-3 ms-auto">
-        @if($questionnaire->status == 'DRAFT' && Auth::user()->roles->first()->name === 'KAPRODI')
+        @if(($questionnaire->status == 'DRAFT' || $questionnaire->status == 'REJECTED') &&
+        Auth::user()->roles->first()->name === 'KAPRODI')
         <form id="form-submit" method="POST" action="{{ route('questionnaire.submit', [$questionnaire->id]) }}">
           @csrf
           {{ method_field('PATCH') }}
