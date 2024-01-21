@@ -8,6 +8,9 @@
       </h1>
     </div>
   </div>
+  @php
+  $isEmpty=true
+  @endphp
   <table id="table-questionnaire" class="table">
     <thead>
       <tr>
@@ -21,6 +24,10 @@
     </thead>
     <tbody>
       @foreach($questionnaires as $index=> $questionnaire)
+      @if(!$questionnaire['hasSubmission'])
+      @php
+      $isEmpty=false
+      @endphp
       <tr class="{{ !$questionnaire['hasSubmission'] ? 'bg-success' : ''}}">
         <td>{{ $index + 1 }}</td>
         <th>{{ $questionnaire->title }}</th>
@@ -30,16 +37,16 @@
         <th>
           <a class="btn btn-sm btn-primary"
             href="{{route('question.index',['questionnaireId' => $questionnaire->id])}}">
-            @if($questionnaire['hasSubmission'])
-            Lihat
-            @else
             Jawab
-            @endif
           </a>
         </th>
       </tr>
+      @endif
       @endforeach
     </tbody>
   </table>
+  @if($isEmpty)
+  <div class="text-center">Tidak ada kuesioner</div>
+  @endif
 </div>
 @endsection
