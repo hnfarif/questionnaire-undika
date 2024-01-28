@@ -45,19 +45,16 @@ class QuestionController extends Controller
             if ($n === 0) {
                 $question['mean'] = 0;
                 return;
+            } else {
+                $sumOfScale = $answers->sum('scale');
+                $question['mean'] = $sumOfScale / $n;
             }
-
-            $sumOfScale = 0;
-            foreach ($answers as $answer) {
-                $sumOfScale += $answer->scale;
-            }
-            $question['mean'] = $sumOfScale / $n;
         }
     }
 
     private function calculateMedian($questions)
     {
-        foreach ($questions as &$question) {
+        foreach ($questions as $question) {
             $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->sort()->toArray();
             $n = count($answers);
 
@@ -79,7 +76,7 @@ class QuestionController extends Controller
 
     private function calculateMode($questions)
     {
-        foreach ($questions as &$question) {
+        foreach ($questions as $question) {
             $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->toArray();
             $frequency = array_count_values($answers);
 
@@ -96,7 +93,7 @@ class QuestionController extends Controller
 
     private function calculateVariance($questions)
     {
-        foreach ($questions as &$question) {
+        foreach ($questions as $question) {
             $answers = Answer::query()->where('question_id', $question->id)->get()->pluck('scale')->toArray();
             $mean = $question['mean'];
 
@@ -109,7 +106,11 @@ class QuestionController extends Controller
             if ($n === 0) {
                 $question['variance'] = 0;
             } else {
-                $question['variance'] = $sumOfSquares / $n;
+                try {
+                    $question['variance'] = $sumOfSquares / ($n - 1);
+                } catch (\Throwable $th) {
+                    $question['variance'] = 0;
+                }
             }
         }
     }

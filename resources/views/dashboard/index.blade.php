@@ -75,19 +75,19 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6" id="mean">
           <h5 class="text-center">Mean</h5>
           <canvas id="canvas-mean"></canvas>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6" id="mode">
           <h5 class="text-center">Mode</h5>
           <canvas id="canvas-mode"></canvas>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6" id="median">
           <h5 class="text-center">Median</h5>
           <canvas id="canvas-median"></canvas>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6" id="variance">
           <h5 class="text-center">Variance</h5>
           <canvas id="canvas-variance"></canvas>
         </div>

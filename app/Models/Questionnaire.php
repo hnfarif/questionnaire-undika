@@ -21,6 +21,7 @@ class Questionnaire extends Model
         'description',
         'start_date',
         'end_date',
+        'note',
         'semester'
     ];
 

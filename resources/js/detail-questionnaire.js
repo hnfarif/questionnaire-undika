@@ -1,5 +1,6 @@
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 import Swal from 'sweetalert2'
 
 $(function () {
@@ -222,4 +223,61 @@ $(function () {
         if (valid) event.target.submit()
       })
   }
+
+  $('#form-reject').on('submit', async function (event) {
+    event.preventDefault()
+
+    let noteInput
+    const {
+      value: { note },
+    } = await Swal.fire({
+      title: 'Form penolakan',
+      html: `
+        <div id="editor-note-container">
+          <div class="border border-primary rounded" id="editor-note"></div>
+        </div>
+      `,
+      width: '80%',
+      confirmButtonText: 'Reject',
+      focusConfirm: false,
+      didOpen: () => {
+        new Quill('#editor-note', {
+          bounds: '#editor-note',
+          placeholder: 'Type Something...',
+          modules: {
+            toolbar: fullToolbar,
+          },
+          theme: 'bubble',
+        })
+
+        const popup = Swal.getPopup()
+        noteInput = popup.querySelector('#editor-note .ql-editor')
+        // noteInput.onkeyup = Swal.clickConfirm()
+      },
+      preConfirm: () => {
+        const note = noteInput.innerHTML
+        if (!note) {
+          Swal.showValidationMessage(`Please enter note`)
+        }
+        return { note }
+      },
+    })
+
+    $('#input-note').val(note)
+
+    event.target.submit()
+  })
+
+  $('.btn-note').on('click', function () {
+    Swal.fire({
+      title: 'Catatan',
+      html: `
+        <div class="text-start">${questionnaire.note}</div>
+      `,
+      showConfirmButton: false,
+      showCloseButton: true,
+      focusConfirm: false,
+      width: '70%',
+    })
+  })
 })
