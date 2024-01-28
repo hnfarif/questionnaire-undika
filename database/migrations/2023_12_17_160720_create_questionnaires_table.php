@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->string('semester', 3);
+            $table->longText('note')->nullable();
             $table->timestamps();
 
             $table->foreign('study_program_id')->references('id')->on('study_programs');

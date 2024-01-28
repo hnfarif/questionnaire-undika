@@ -24,6 +24,12 @@
           Detail
         </li>
       </ol>
+      @if($questionnaire->status == "REJECTED")
+      <div class="alert alert-danger fade show d-flex align-items-center" role="alert">
+        <strong class="me-2">DITOLAK!</strong> Silahkan revisi kuesioner anda.
+        <button class="btn btn-danger ms-auto btn-note">Lihat Catatan <i class="fa-solid fa-note-sticky"></i></button>
+      </div>
+      @endif
       <div class="card mb-4">
         <div class="card-header">
           Deskripsi
@@ -52,9 +58,10 @@
         <button class="btn btn-success" disabled>Submitted</button>
         @endif
         @if($questionnaire->status == 'SUBMITTED' && Auth::user()->roles->first()->name === 'DEKAN')
-        <form method="POST" action="{{ route('questionnaire.reject', [$questionnaire->id]) }}">
+        <form method="POST" action="{{ route('questionnaire.reject', [$questionnaire->id]) }}" id="form-reject">
           @csrf
           {{ method_field('PATCH') }}
+          <input name="note" id="input-note" class="d-none">
           <button class="btn btn-danger">Reject</button>
         </form>
         <form method="POST" action="{{ route('questionnaire.approve', [$questionnaire->id]) }}">

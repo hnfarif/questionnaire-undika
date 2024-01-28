@@ -60,6 +60,14 @@ $(function () {
                 : ''
             }
 
+            ${
+              user.roles.some((role) => role.name === 'KAPRODI') && questionnaire.status === 'DRAFT'
+                ? `<button class="btn btn-danger btn-delete" title="Duplikat Kuesioner" data-id="${questionnaire.id}">
+            <i class="fa-solid fa-trash"></i>
+          </button>`
+                : ''
+            }
+
             <a href="/questionnaire/${questionnaire.id}" class="btn btn-primary">Detail</a>
             ${
               questionnaire.status === 'APPROVED'
@@ -93,6 +101,7 @@ $(function () {
   $('#select-semester').on('change', handleSelectSemester)
   table.on('click', '.btn-edit', handleEditQuestionnaire)
   table.on('click', '.btn-duplicate', handleDuplicateQuestionnaire)
+  table.on('click', '.btn-delete', handleDeleteQuestionnaire)
 
   function handleAddQuestionnaire() {
     const title = $('#input-title').val()
@@ -235,6 +244,48 @@ $(function () {
             Swal.fire({
               title: 'Berhasil!',
               text: 'Kuesioner anda berhasil diduplikasi!. Cek kuesioner di semester yang sedang aktif!',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            })
+          },
+          error: function (xhr) {
+            console.log(xhr.responseText)
+          },
+        })
+      }
+    })
+  }
+
+  function handleDeleteQuestionnaire() {
+    Swal.fire({
+      title: 'Apakah anda yakin?',
+      html: 'Aksi ini akan menghapus kuesioner selamanya',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Hapus',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `api/questionnaire/${$(this).data('id')}`,
+          method: 'DELETE',
+          beforeSend: function () {
+            Swal.fire({
+              title: 'Loading...',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                Swal.showLoading()
+              },
+            })
+          },
+          success: function (data) {
+            table.ajax.reload()
+            Swal.fire({
+              title: 'Berhasil!',
+              text: 'Kuesioner anda berhasil dihapus!',
               icon: 'success',
               showConfirmButton: false,
               timer: 1500,

@@ -42,10 +42,24 @@ $(function () {
                   const categoryId = parseInt(event.target.value)
                   if (!categoryId) return
 
-                  drawChart('Mean', 'canvas-mean', questions, 'mean', categoryId)
-                  drawChart('Mode', 'canvas-mode', questions, 'mode', categoryId)
-                  drawChart('Median', 'canvas-median', questions, 'median', categoryId)
-                  drawChart('Variance', 'canvas-variance', questions, 'variance', categoryId)
+                  drawChart(questionnaire, 'Mean', 'canvas-mean', questions, 'mean', categoryId)
+                  drawChart(questionnaire, 'Mode', 'canvas-mode', questions, 'mode', categoryId)
+                  drawChart(
+                    questionnaire,
+                    'Median',
+                    'canvas-median',
+                    questions,
+                    'median',
+                    categoryId
+                  )
+                  drawChart(
+                    questionnaire,
+                    'Variance',
+                    'canvas-variance',
+                    questions,
+                    'variance',
+                    categoryId
+                  )
                 })
 
               $('#select-category').val(`${categories[0].id}`).trigger('change')
@@ -80,7 +94,6 @@ const subscriptMap = {
 }
 
 function drawStatistic(questionnaire) {
-  console.log(questionnaire)
   const numberOfStudents = questionnaire.study_program.students.length
   const numberOfSubmissions = questionnaire.submissions.length
   const semester = questionnaire.semester
@@ -89,7 +102,7 @@ function drawStatistic(questionnaire) {
   $('#stat-semester').text(semester)
 }
 
-function drawChart(label, canvasId, questions, dataKey, categoryId) {
+function drawChart(questionnaire, label, canvasId, questions, dataKey, categoryId) {
   const counter = {}
   const labels = questions
     .filter((question) => question.category_id === categoryId)
@@ -111,7 +124,11 @@ function drawChart(label, canvasId, questions, dataKey, categoryId) {
       label: label,
       data: questions
         .filter((question) => question.category_id === categoryId)
-        .map((question) => question[dataKey]),
+        .map((question) => {
+          if (dataKey !== 'mode') return question[dataKey]
+          if (questionnaire.submissions.length < 3) return 0
+          else return question[dataKey]
+        }),
       backgroundColor: questions
         .filter((question) => question.category_id === categoryId)
         .map(

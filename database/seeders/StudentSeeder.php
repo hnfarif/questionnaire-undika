@@ -20,7 +20,7 @@ class StudentSeeder extends Seeder
     {
         $stupro = StudyProgram::get();
         foreach ($stupro as $pro) {
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= 30; $i++) {
 
                 $user = User::create([
                     'id' => fake()->numerify('17#########'),

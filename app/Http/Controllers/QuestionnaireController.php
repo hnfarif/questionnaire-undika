@@ -70,10 +70,12 @@ class QuestionnaireController extends Controller
         return back();
     }
 
-    public function reject(string $id): RedirectResponse
+    public function reject(Request $request, string $id): RedirectResponse
     {
+
         $questionnaire = Questionnaire::findOrFail($id);
         $questionnaire->status = 'REJECTED';
+        $questionnaire->note = $request->note;
         $questionnaire->save();
 
         return back();
