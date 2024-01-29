@@ -110,7 +110,7 @@
                 <th>
                   @if(!isset($shouldRVisible[$question->category_id]))
                   <span data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="{{ $r[$question->category_id] > 0.70 ? 'Reliable' : 'Tidak Reliable'}}">
+                    title="{{ $r[$question->category_id] > 0.60 ? 'Reliable' : 'Tidak Reliable'}}">
                     {{ number_format($r[$question->category_id], 3) }}
                   </span>
                   @endif
