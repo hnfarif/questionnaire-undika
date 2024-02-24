@@ -91,6 +91,10 @@
           <h5 class="text-center">Variance</h5>
           <canvas id="canvas-variance"></canvas>
         </div>
+        <div class="col-12 col-md-6" id="meanPerCategory">
+          <h5 class="text-center">Mean Per Category</h5>
+          <canvas id="canvas-meanPerCategory"></canvas>
+        </div>
       </div>
     </div>
   </div>
