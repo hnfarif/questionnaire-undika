@@ -42,9 +42,23 @@ $(function () {
                   const categoryId = parseInt(event.target.value)
                   if (!categoryId) return
 
-                  drawChart(questionnaire, 'Mean', 'canvas-mean', questions, 'mean', categoryId)
-                  drawChart(questionnaire, 'Mode', 'canvas-mode', questions, 'mode', categoryId)
-                  drawChart(
+                  drawQuestionChart(
+                    questionnaire,
+                    'Mean',
+                    'canvas-mean',
+                    questions,
+                    'mean',
+                    categoryId
+                  )
+                  drawQuestionChart(
+                    questionnaire,
+                    'Mode',
+                    'canvas-mode',
+                    questions,
+                    'mode',
+                    categoryId
+                  )
+                  drawQuestionChart(
                     questionnaire,
                     'Median',
                     'canvas-median',
@@ -52,7 +66,7 @@ $(function () {
                     'median',
                     categoryId
                   )
-                  drawChart(
+                  drawQuestionChart(
                     questionnaire,
                     'Variance',
                     'canvas-variance',
@@ -60,6 +74,14 @@ $(function () {
                     'variance',
                     categoryId
                   )
+
+                  $.get(`/api/dashboard`)
+                    .done(function (categories) {
+                      drawCategoryChart(categories, 'canvas-meanPerCategory', categoryId)
+                    })
+                    .fail(function (xhr) {
+                      console.log(xhr.responseText)
+                    })
                 })
 
               $('#select-category').val(`${categories[0].id}`).trigger('change')
@@ -102,7 +124,38 @@ function drawStatistic(questionnaire) {
   $('#stat-semester').text(semester)
 }
 
-function drawChart(questionnaire, label, canvasId, questions, dataKey, categoryId) {
+const config = (data) => ({
+  type: 'bar',
+  data: data,
+  options: {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          font: {
+            family: 'Consolas',
+            size: 16,
+          },
+        },
+      },
+      x: {
+        ticks: {
+          font: {
+            family: 'Consolas',
+            size: 16,
+          },
+        },
+      },
+    },
+  },
+})
+
+function drawQuestionChart(questionnaire, label, canvasId, questions, dataKey, categoryId) {
   const counter = {}
   const labels = questions
     .filter((question) => question.category_id === categoryId)
@@ -149,40 +202,37 @@ function drawChart(questionnaire, label, canvasId, questions, dataKey, categoryI
 
   const data = { labels, datasets }
 
-  const config = {
-    type: 'bar',
-    data: data,
-    options: {
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            font: {
-              family: 'Consolas',
-              size: 16,
-            },
-          },
-        },
-        x: {
-          ticks: {
-            font: {
-              family: 'Consolas',
-              size: 16,
-            },
-          },
-        },
-      },
-    },
+  if (charts[canvasId]) {
+    charts[canvasId].destroy()
   }
+
+  charts[canvasId] = new Chart(document.getElementById(canvasId).getContext('2d'), config(data))
+}
+
+function drawCategoryChart(categories, canvasId, categoryId) {
+  const labels = categories
+    .filter((category) => category.id == categoryId)
+    .map((category) => category.name)
+
+  const datasets = [
+    {
+      label: 'Mean Per Category',
+      data: categories
+        .filter((category) => category.id == categoryId)
+        .map((category) => category.mean),
+      backgroundColor: [
+        backgroundColors[categories.findIndex((category) => category.id === categoryId)],
+      ],
+      borderColor: [borderColors[categories.findIndex((category) => category.id === categoryId)]],
+      borderWidth: 1,
+    },
+  ]
+
+  const data = { labels, datasets }
 
   if (charts[canvasId]) {
     charts[canvasId].destroy()
   }
 
-  charts[canvasId] = new Chart(document.getElementById(canvasId).getContext('2d'), config)
+  charts[canvasId] = new Chart(document.getElementById(canvasId).getContext('2d'), config(data))
 }
